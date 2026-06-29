@@ -2,6 +2,8 @@ import { db } from "@/lib/db";
 import { UserCheck, ShieldAlert } from "lucide-react";
 import { ImpersonateUserList } from "@/features/admin/components/ImpersonateUserList";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminImpersonationPage() {
   // Query all users that can be impersonated
   const users = await db.user.findMany({

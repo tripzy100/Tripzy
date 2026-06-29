@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import { Activity, Laptop } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminAuditsPage() {
   const auditLogs = await db.auditLog.findMany({
     orderBy: { createdAt: "desc" },

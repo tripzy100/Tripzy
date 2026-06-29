@@ -5,6 +5,8 @@ import { Footer } from "@/components/layout/footer";
 import { VehicleDetailView } from "@/features/catalog/components/vehicle-detail-view";
 import { constructMetadata } from "@/utils/metadata";
 
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: Promise<{
     slug: string;

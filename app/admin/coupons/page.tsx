@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import { Tag, Check, X } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminCouponsPage() {
   const coupons = await db.coupon.findMany({
     orderBy: { createdAt: "desc" },

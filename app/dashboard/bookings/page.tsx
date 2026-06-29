@@ -3,6 +3,8 @@ import { db } from "@/lib/db";
 import { Clock, CalendarRange } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+export const dynamic = "force-dynamic";
+
 export default async function CustomerBookingsPage() {
   const user = await db.user.findFirst({
     include: {

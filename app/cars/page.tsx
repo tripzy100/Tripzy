@@ -7,6 +7,8 @@ import { SearchHeader } from "@/features/catalog/components/search-header";
 import { Button } from "@/components/ui/button";
 import { Fuel, Star, Users } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 // Slug generation utility helper
 function getVehicleSlug(brand: string, model: string, year: number, transmission: string, fuel: string) {
   return `${brand.toLowerCase()}-${model.toLowerCase()}-${year}-${transmission.toLowerCase()}-${fuel.toLowerCase()}`.replace(/\s+/g, "-");

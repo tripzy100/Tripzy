@@ -4,6 +4,8 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { BookingDetailView } from "@/features/booking/components/booking-detail-view";
 
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: Promise<{
     id: string;

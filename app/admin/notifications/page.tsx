@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import { Mail, MessageSquare } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminNotificationsDashboard() {
   const [emails, smsLogs] = await Promise.all([
     db.emailSent.findMany({ orderBy: { createdAt: "desc" }, take: 25 }),

@@ -3,6 +3,8 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { FleetDashboard } from "@/features/fleet/components/FleetDashboard";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminFleetPage() {
   // Query all active vehicles from database (where deletedAt is null)
   const vehicles = await db.vehicle.findMany({

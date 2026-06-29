@@ -3,6 +3,8 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { AdminPaymentsList } from "@/features/payment/components/AdminPaymentsList";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminPaymentsPage() {
   // Query all payments from database
   const payments = await db.payment.findMany({

@@ -3,6 +3,8 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { AdminBookingList } from "@/features/booking/components/admin-booking-list";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminBookingsPage() {
   const bookings = await db.booking.findMany({
     orderBy: { createdAt: "desc" },

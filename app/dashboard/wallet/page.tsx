@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import { Wallet, ArrowDownLeft, ArrowUpRight, TrendingUp } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function WalletPage() {
   const user = await db.user.findFirst({
     include: {

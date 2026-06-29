@@ -2,6 +2,8 @@ import { db } from "@/lib/db";
 import { ShieldCheck } from "lucide-react";
 import { KycReviewList } from "@/features/admin/components/KycReviewList";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminKycQueuePage() {
   // Query users who are not yet KYC-verified
   const pendingUsers = await db.user.findMany({

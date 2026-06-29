@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import { Car, Calendar, ShieldCheck, Wallet, RefreshCw, AlertCircle } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboardPage() {
   // Query operations database details
   const [totalCars, maintenanceCars, pendingBookings, confirmedBookings, totalPayments] = await Promise.all([

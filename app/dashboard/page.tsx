@@ -3,6 +3,8 @@ import { db } from "@/lib/db";
 import { Wallet, ShieldCheck, Bell, ArrowUpRight, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage() {
   // Query details for mock user
   const user = await db.user.findFirst({
