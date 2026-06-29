@@ -12,12 +12,12 @@ Tripzy is built using **Feature-Based Architecture**, coupled with a strict sepa
 
 ```mermaid
 graph TD
-    A[Next.js App Router/Actions/Pages] --> B[Service Layer (Business Logic)]
-    B --> C[Repository Layer (Data Access)]
-    C --> D[Prisma Client / PostgreSQL]
-    C --> E[Upstash Redis Cache]
-    B --> F[Resend Email Service]
-    B --> G[Cashfree Gateway]
+    A["Next.js App Router/Actions/Pages"] --> B["Service Layer (Business Logic)"]
+    B --> C["Repository Layer (Data Access)"]
+    C --> D["Prisma Client / PostgreSQL"]
+    C --> E["Upstash Redis Cache"]
+    B --> F["Resend Email Service"]
+    B --> G["Cashfree Gateway"]
 ```
 
 1. **Client / Server Pages (`app/`, `components/`)**: The presentation boundary. Consists of pure components, layout definitions, context loaders, and dynamic triggers.
