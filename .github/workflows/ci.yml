@@ -12,6 +12,20 @@ concurrency:
 
 env:
   NODE_VERSION: "20"
+  DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/tripzy_test"
+  DIRECT_URL: "postgresql://postgres:postgres@localhost:5432/tripzy_test"
+  NEXT_PUBLIC_SUPABASE_URL: "https://mock.supabase.co"
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: "mock_anon_key"
+  SUPABASE_SERVICE_ROLE_KEY: "mock_service_role_key"
+  CLOUDINARY_CLOUD_NAME: "mock_cloudinary"
+  CLOUDINARY_API_KEY: "mock_key"
+  CLOUDINARY_API_SECRET: "mock_secret"
+  GOOGLE_MAPS_API_KEY: "mock_key"
+  CASHFREE_APP_ID: "mock_id"
+  CASHFREE_SECRET_KEY: "mock_key"
+  CASHFREE_ENV: "sandbox"
+  RESEND_API_KEY: "re_mock_key"
+  NEXT_PUBLIC_APP_URL: "http://localhost:3000"
 
 jobs:
   validate:
@@ -43,36 +57,6 @@ jobs:
 
       - name: Run unit tests
         run: npm run test
-        env:
-          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/tripzy_test"
-          DIRECT_URL: "postgresql://postgres:postgres@localhost:5432/tripzy_test"
-          NEXT_PUBLIC_SUPABASE_URL: "https://mock.supabase.co"
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: "mock_anon_key"
-          SUPABASE_SERVICE_ROLE_KEY: "mock_service_role_key"
-          CLOUDINARY_CLOUD_NAME: "mock_cloudinary"
-          CLOUDINARY_API_KEY: "mock_key"
-          CLOUDINARY_API_SECRET: "mock_secret"
-          GOOGLE_MAPS_API_KEY: "mock_key"
-          CASHFREE_APP_ID: "mock_id"
-          CASHFREE_SECRET_KEY: "mock_key"
-          CASHFREE_ENV: "sandbox"
-          RESEND_API_KEY: "re_mock_key"
-          NEXT_PUBLIC_APP_URL: "http://localhost:3000"
 
       - name: Build Next.js
         run: npm run build
-        env:
-          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/tripzy_test"
-          DIRECT_URL: "postgresql://postgres:postgres@localhost:5432/tripzy_test"
-          NEXT_PUBLIC_SUPABASE_URL: "https://mock.supabase.co"
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: "mock_anon_key"
-          SUPABASE_SERVICE_ROLE_KEY: "mock_service_role_key"
-          CLOUDINARY_CLOUD_NAME: "mock_cloudinary"
-          CLOUDINARY_API_KEY: "mock_key"
-          CLOUDINARY_API_SECRET: "mock_secret"
-          GOOGLE_MAPS_API_KEY: "mock_key"
-          CASHFREE_APP_ID: "mock_id"
-          CASHFREE_SECRET_KEY: "mock_key"
-          CASHFREE_ENV: "sandbox"
-          RESEND_API_KEY: "re_mock_key"
-          NEXT_PUBLIC_APP_URL: "http://localhost:3000"
