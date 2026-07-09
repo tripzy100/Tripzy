@@ -1,0 +1,76 @@
+# ============================================
+# Tripzy Tours — CODEOWNERS
+# ============================================
+# Each line is a file pattern followed by one or more owners.
+# Order matters: the last matching pattern takes precedence.
+# ============================================
+
+# Global fallback — every PR needs Dev 1 approval
+* @tripzy100
+
+# ============================================
+# Developer 1 (Owner) — Core & Sensitive Areas
+# ============================================
+
+# Payment system
+/features/payment/ @tripzy100
+/app/api/payment/ @tripzy100
+
+# Authentication & Security
+/features/auth/ @tripzy100
+/app/api/auth/ @tripzy100
+/lib/supabase*.ts @tripzy100
+/lib/auth* @tripzy100
+/middleware.ts @tripzy100
+
+# Booking engine
+/features/booking/ @tripzy100
+/app/api/booking/ @tripzy100
+
+# Database & Prisma
+/prisma/ @tripzy100
+
+# Security-related files
+/SECURITY.md @tripzy100
+
+# Admin features
+/features/admin/ @tripzy100
+/app/admin/ @tripzy100
+
+# Infrastructure & CI/CD
+/.github/workflows/ @tripzy100
+/.github/CODEOWNERS @tripzy100
+
+# ============================================
+# Developer 2 — Frontend & UI
+# ============================================
+
+# Frontend components
+/components/ @developer2
+/features/landing/ @developer2
+/app/layout.tsx @developer2
+/styles/ @developer2
+
+# Animations
+/hooks/ @developer2
+/providers/ @developer2
+
+# SEO & Metadata
+/app/sitemap.ts @developer2
+/config/site.ts @developer2
+/components/seo/ @developer2
+
+# UI component library
+/components/ui/ @developer2
+
+# ============================================
+# Shared — Either Dev can approve
+# ============================================
+
+# Tests
+/tests/ @tripzy100 @developer2
+
+# Documentation
+/docs/ @tripzy100 @developer2
+/README.md @tripzy100 @developer2
+/CONTRIBUTING.md @tripzy100 @developer2

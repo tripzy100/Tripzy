@@ -1,139 +1,148 @@
-# Tripzy Enterprise Platform Foundation
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/tripzy100/Tripzy/main/public/logo-dark.svg">
+  <img alt="Tripzy Tours" src="https://raw.githubusercontent.com/tripzy100/Tripzy/main/public/logo.svg">
+</picture>
 
-Welcome to the enterprise-grade foundation of **Tripzy**, a premium, scalable, and secure Self Drive Car Rental platform built with **Next.js 15**, **React 19**, and **TypeScript**.
+# Tripzy Tours
 
----
+**Self-Drive Car Rental Platform** — India's trusted marketplace for hourly, daily, and monthly car rentals.
 
-## 📐 Architecture Overview
-
-Tripzy is built using **Feature-Based Architecture**, coupled with a strict separation of concerns via the **Service Layer** and **Repository Pattern**.
-
-### Clean Architecture Layers
-
-```mermaid
-graph TD
-    A["Next.js App Router/Actions/Pages"] --> B["Service Layer (Business Logic)"]
-    B --> C["Repository Layer (Data Access)"]
-    C --> D["Prisma Client / PostgreSQL"]
-    C --> E["Upstash Redis Cache"]
-    B --> F["Resend Email Service"]
-    B --> G["Cashfree Gateway"]
-```
-
-1. **Client / Server Pages (`app/`, `components/`)**: The presentation boundary. Consists of pure components, layout definitions, context loaders, and dynamic triggers.
-2. **Service Layer (`services/`, `features/*/services/`)**: Enforces clean business validation constraints. Controls email communications, transaction allocations, API requests, and audit Logging.
-3. **Repository Layer (`features/*/repositories/`)**: Abstracted interface isolation for querying the database or caching storage delegates.
-4. **Data Access (`lib/db.ts`, `lib/redis.ts`)**: Base database adapters and client instances.
+| Aspect           | Stack                                                       |
+| ---------------- | ----------------------------------------------------------- |
+| **Framework**    | Next.js 15 (App Router)                                     |
+| **Language**     | TypeScript (strict)                                         |
+| **Database**     | Supabase PostgreSQL + Prisma ORM                            |
+| **Auth**         | Supabase Auth (Email + Google OAuth)                        |
+| **UI**           | Tailwind CSS + shadcn/ui + Framer Motion                    |
+| **Payments**     | Cashfree (sandbox / production)                             |
+| **Media**        | Cloudinary (image upload & CDN)                             |
+| **Maps**         | Google Maps API                                             |
+| **Email/SMS**    | Resend / MSG91                                              |
+| **Hosting**      | Vercel (Production + Preview)                               |
+| **CDN**          | Cloudflare                                                  |
+| **CI/CD**        | GitHub Actions                                              |
 
 ---
 
-## 📁 Directory Structure
+## Quick Start
 
-The project conforms to the following structural schema to ensure modules are modular and self-contained:
-
-```text
-Tripzy/
-├── .github/workflows/          # Continuous Integration workflow rules
-├── actions/                    # Next.js Server Actions (root scope)
-├── app/                        # Next.js App Router endpoints, loaders, errors
-├── components/                 # Global UI atoms (buttons, dialogs, skeletal loading)
-├── config/                     # Strict environment validations and site static options
-├── constants/                  # Standard HTTP tags, error tags, branding configurations
-├── emails/                     # Transactional layout scripts (Resend integrations)
-├── features/                   # Core modules (Self-contained domains)
-│   └── [feature_name]/         # Examples: user, billing, booking, vehicle, KYC
-│       ├── components/         # Feature specific elements
-│       ├── hooks/              # Feature specific hooks
-│       ├── services/           # Feature business layer
-│       ├── repositories/       # Feature database controllers
-│       ├── types.ts            # Domain specific Type declarations
-│       └── validators.ts       # Domain Zod verification maps
-├── hooks/                      # Shared global React hooks
-├── lib/                        # Infrastructure singletons (Prisma, Redis, Resend, Sentry)
-├── middleware/                 # Rate limiting, secure headers, CORS, session RBAC
-├── providers/                  # Application contexts (Themes, React-Query, Toasts)
-├── prisma/                     # Database setup scripts and model blueprints
-├── public/                     # Static media items and assets
-├── styles/                     # Tailwinds styling directives
-├── tests/                      # Testing config layers and E2E frameworks
-├── types/                      # Universal TS mappings
-├── utils/                      # Core utility scripts (AES, CSRF, formatting)
-└── validators/                 # Shared validation structures
-```
-
----
-
-## 🚀 Development Workflow & Commands
-
-### Prerequisites
-- Node.js version 20+ installed.
-- PostgreSQL database instance configured.
-- Upstash Redis account credentials.
-
-### Installation
 ```bash
+git clone https://github.com/tripzy100/Tripzy.git
+cd Tripzy
 npm install
+cp .env.example .env.local   # Fill in your credentials
+npx prisma migrate dev
+npx prisma generate
+npx tsx prisma/seeds/seed.ts
+npm run dev                  # → http://localhost:3000
 ```
 
-### Development server
-```bash
-npm run dev
-```
-
-### Code Formatting and Linting
-```bash
-# Verify type safety
-npx tsc --noEmit
-
-# Run ESLint validation
-npm run lint
-
-# Automatically format code using Prettier
-npm run format
-```
-
-### Testing Suite
-```bash
-# Execute unit and integration tests (Vitest)
-npm run test
-
-# Run Watch Mode
-npm run test:watch
-
-# Execute E2E browser tests (Playwright)
-npm run test:e2e
-```
+See the [Developer Setup Guide](./docs/DEV_SETUP.md) for detailed instructions.
 
 ---
 
-## 📝 Coding Standards & Guidelines
+## Branch Strategy
 
-### Coding Rules
-- **Component Limit**: Maximum component length is **250 lines**. Keep them focused and decoupled.
-- **Function Limit**: Maximum function length is **50 lines**. Extract auxiliary helpers into utility files.
-- **Strict Typing**: No `any` type allowed. Define explicit TypeScript interfaces and types.
-- **Server Components**: Prefer Next.js React Server Components (RSC) by default. Use `"use client"` only for interactive components containing hooks or DOM actions.
+```
+main          Production (protected — no direct commits)
+  └── develop   Integration branch (Vercel Preview)
+        ├── feature/*  New features → PR into develop
+        └── hotfix/*   Emergency fixes → PR into main + develop
+```
 
-### File Naming Conventions
-- **React Components**: PascalCase (e.g., `Button.tsx`, `EmptyState.tsx`).
-- **Hooks**: camelCase starting with `use` (e.g., `useMediaQuery.ts`).
-- **Files/Utilities**: kebab-case (e.g., `security.ts`, `error-boundary.tsx`).
-- **Feature Modules**: lowercase singular (e.g., `booking`, `billing`).
+| Branch         | Environment          | CI Required |
+| -------------- | -------------------- | ----------- |
+| `main`         | Vercel Production    | ✅ Yes       |
+| `develop`      | Vercel Preview       | ✅ Yes       |
+| `feature/*`    | Auto Preview URL     | ✅ Yes (PR)  |
+| `hotfix/*`     | Auto Preview URL     | ✅ Yes (PR)  |
 
-### Branching Strategy
-We use Git Flow for release pipelines:
-- `main`: Represents stable production deployments.
-- `staging`: Integration environment testing.
-- `dev`: Active core developmental workspace.
-- `feature/[feature-name]`: Active working branches derived from `dev`.
-- `hotfix/[fix-name]`: Immediate patch fixes branching directly from `main`.
+See [Git Workflow Guide](./docs/GIT_WORKFLOW.md) and [Branch Naming Guide](./docs/BRANCH_NAMING.md).
 
-### Git Commit Conventions
-We use the **Angular Commit Specification**:
-- `feat`: A new feature (e.g., `feat: integrate Google Maps route rendering`)
-- `fix`: A bug fix (e.g., `fix: resolve CSRF validation token miss`)
-- `docs`: Documentation updates (e.g., `docs: add folder structure diagram`)
-- `style`: Visual adjustments, missing semi-colons, formatting checks
-- `refactor`: Structural rewrite that does not change functional behavior
-- `test`: Adding missing test coverage or adjusting test rules
-- `chore`: Infrastructure adjustments, configuration changes, packages install
+---
+
+## Commit Convention
+
+We follow **Conventional Commits**:
+
+```
+feat(scope): description    # New feature
+fix(scope): description     # Bug fix
+refactor(scope): ...        # Code restructuring
+docs: ...                   # Documentation
+chore: ...                  # Maintenance
+```
+
+See [Commit Guide](./docs/COMMIT_GUIDE.md).
+
+---
+
+## Scripts
+
+| Command              | Description                |
+| -------------------- | -------------------------- |
+| `npm run dev`        | Start dev server           |
+| `npm run build`      | Production build           |
+| `npm run lint`       | ESLint check               |
+| `npm run format`     | Prettier format            |
+| `npm test`           | Run Vitest tests           |
+| `npx prisma studio`  | Open DB browser            |
+| `npx tsc --noEmit`   | TypeScript type check      |
+
+---
+
+## CI/CD Pipeline
+
+Every Pull Request runs:
+
+1. `npm ci` — clean install
+2. `npx tsc --noEmit` — TypeScript compilation check
+3. `npm run lint` — ESLint
+4. `npx prisma generate` — Prisma client generation
+5. `npm test` — Vitest unit tests
+6. `npm run build` — Next.js production build
+
+Deployments are automatic via GitHub Actions → Vercel.
+
+See [CI Workflow](./.github/workflows/ci.yml) and [Deploy Workflow](./.github/workflows/deploy.yml).
+
+---
+
+## Documentation
+
+| Guide                       | File                          |
+| --------------------------- | ----------------------------- |
+| Architecture                | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) |
+| Supabase Setup              | [docs/SUPABASE_SETUP.md](./docs/SUPABASE_SETUP.md) |
+| Deployment (Infra)          | [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) |
+| Developer Setup             | [docs/DEV_SETUP.md](./docs/DEV_SETUP.md) |
+| Git Workflow                | [docs/GIT_WORKFLOW.md](./docs/GIT_WORKFLOW.md) |
+| Branch Naming               | [docs/BRANCH_NAMING.md](./docs/BRANCH_NAMING.md) |
+| Commit Guide                | [docs/COMMIT_GUIDE.md](./docs/COMMIT_GUIDE.md) |
+| Merge Guide                 | [docs/MERGE_GUIDE.md](./docs/MERGE_GUIDE.md) |
+| Deployment Guide            | [docs/DEPLOYMENT_GUIDE.md](./docs/DEPLOYMENT_GUIDE.md) |
+| Release Guide               | [docs/RELEASE_GUIDE.md](./docs/RELEASE_GUIDE.md) |
+| Troubleshooting             | [docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md) |
+
+---
+
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for our contribution guidelines.
+
+## Security
+
+Report vulnerabilities to **security@tripzy.com**. See [SECURITY.md](./SECURITY.md).
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for version history.
+
+## Team
+
+- **Developer 1** — Owner: Payments, Auth, Booking, DB, Security, Admin, CI/CD
+- **Developer 2** — Frontend: UI, Components, Landing Page, SEO, Animations
+
+## License
+
+Private — Tripzy Tours

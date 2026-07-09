@@ -1,0 +1,50 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Source code
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.prisma text eol=lf
+
+# Shell scripts
+*.sh text eol=lf
+
+# Batch scripts
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Images
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg text
+*.webp binary
+
+# Fonts
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+
+# Archives
+*.zip binary
+*.tar.gz binary
+*.rar binary
+
+# Environment
+.env.example text eol=lf
+.env.development text eol=lf
+.env.production text eol=lf
+
+# Lock files
+package-lock.json text eol=lf

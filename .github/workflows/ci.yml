@@ -1,45 +1,70 @@
-name: Tripzy CI Pipeline
+name: CI — Validate Pull Request
 
 on:
-  push:
-    branches: [main, staging, dev]
   pull_request:
-    branches: [main, staging, dev]
+    branches: [main, develop]
+  push:
+    branches: [develop]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "20"
 
 jobs:
   validate:
+    name: Validate Code Quality
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
-      - name: Checkout Codebase
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js Environment
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: "npm"
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
 
-      - name: Install Project Dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: Validate Lint Standards
-        run: npm run lint
-
-      - name: Verify Formatting Style
-        run: npm run format:check
-
-      - name: Check TypeScript Compilation
+      - name: Check TypeScript compilation
         run: npx tsc --noEmit
 
-      - name: Execute Vitest Unit Tests
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      - name: Run unit tests
         run: npm run test
         env:
           DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/tripzy_test"
-          UPSTASH_REDIS_REST_URL: "https://mock.upstash.io"
-          UPSTASH_REDIS_REST_TOKEN: "mock_token"
-          BETTER_AUTH_SECRET: "mock_secret_longer_than_32_characters_long"
-          BETTER_AUTH_URL: "http://localhost:3000"
+          NEXT_PUBLIC_SUPABASE_URL: "https://mock.supabase.co"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "mock_anon_key"
+          SUPABASE_SERVICE_ROLE_KEY: "mock_service_role_key"
+          CLOUDINARY_CLOUD_NAME: "mock_cloudinary"
+          CLOUDINARY_API_KEY: "mock_key"
+          CLOUDINARY_API_SECRET: "mock_secret"
+          GOOGLE_MAPS_API_KEY: "mock_key"
+          CASHFREE_APP_ID: "mock_id"
+          CASHFREE_SECRET_KEY: "mock_key"
+          CASHFREE_ENV: "sandbox"
+          RESEND_API_KEY: "re_mock_key"
+          NEXT_PUBLIC_APP_URL: "http://localhost:3000"
+
+      - name: Build Next.js
+        run: npm run build
+        env:
+          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/tripzy_test"
+          NEXT_PUBLIC_SUPABASE_URL: "https://mock.supabase.co"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "mock_anon_key"
+          SUPABASE_SERVICE_ROLE_KEY: "mock_service_role_key"
           CLOUDINARY_CLOUD_NAME: "mock_cloudinary"
           CLOUDINARY_API_KEY: "mock_key"
           CLOUDINARY_API_SECRET: "mock_secret"
