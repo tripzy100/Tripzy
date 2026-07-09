@@ -20,7 +20,11 @@ export default async function DashboardPage() {
   });
 
   if (!user) {
-    return <div className="text-sm text-muted-foreground">User session not allocated. Please run seed.</div>;
+    return (
+      <div className="text-sm text-muted-foreground">
+        User session not allocated. Please run seed.
+      </div>
+    );
   }
 
   const kycStatus = "VERIFIED";
@@ -31,18 +35,19 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       {/* Welcome Banner */}
-      <div className="rounded-2xl bg-card border border-border p-6 md:p-8 space-y-2">
+      <div className="space-y-2 rounded-2xl border border-border bg-card p-6 md:p-8">
         <h1 className="font-display text-2xl font-bold tracking-tight text-foreground md:text-3xl">
           Welcome back, {fullName}!
         </h1>
-        <p className="text-sm text-muted-foreground max-w-lg">
-          Manage your self-drive reservations, audit transaction details, and upload driving credentials.
+        <p className="max-w-lg text-sm text-muted-foreground">
+          Manage your self-drive reservations, audit transaction details, and upload driving
+          credentials.
         </p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
         {/* Wallet Overview Card */}
-        <div className="rounded-xl border border-border bg-card/30 p-5 space-y-4">
+        <div className="space-y-4 rounded-xl border border-border bg-card/30 p-5">
           <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             <Wallet className="h-4 w-4" /> Wallet Balance
           </span>
@@ -53,12 +58,12 @@ export default async function DashboardPage() {
         </div>
 
         {/* KYC Status Card */}
-        <div className="rounded-xl border border-border bg-card/30 p-5 space-y-4">
+        <div className="space-y-4 rounded-xl border border-border bg-card/30 p-5">
           <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             <ShieldCheck className="h-4 w-4" /> KYC Status
           </span>
           <div>
-            <span className="inline-flex rounded-full bg-emerald-500/10 text-emerald-500 px-3 py-1 text-xs font-semibold">
+            <span className="inline-flex rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-500">
               {kycStatus}
             </span>
           </div>
@@ -68,14 +73,16 @@ export default async function DashboardPage() {
         </div>
 
         {/* Notifications Card */}
-        <div className="rounded-xl border border-border bg-card/30 p-5 space-y-4">
+        <div className="space-y-4 rounded-xl border border-border bg-card/30 p-5">
           <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             <Bell className="h-4 w-4" /> Notifications
           </span>
-          <p className="text-xs text-muted-foreground leading-relaxed">
+          <p className="text-xs leading-relaxed text-muted-foreground">
             Your verification documents have been audited and approved standard.
           </p>
-          <span className="text-xs font-semibold text-foreground/80 cursor-default">0 unread updates</span>
+          <span className="cursor-default text-xs font-semibold text-foreground/80">
+            0 unread updates
+          </span>
         </div>
       </div>
 
@@ -84,7 +91,9 @@ export default async function DashboardPage() {
         <div className="flex items-center justify-between">
           <h3 className="font-display text-lg font-bold text-foreground">Recent Reservations</h3>
           <Link href="/dashboard/bookings">
-            <Button size="sm" variant="ghost">View All</Button>
+            <Button size="sm" variant="ghost">
+              View All
+            </Button>
           </Link>
         </div>
 
@@ -93,22 +102,24 @@ export default async function DashboardPage() {
             recentBookings.map((b: any) => (
               <div
                 key={b.id}
-                className="flex items-center justify-between rounded-xl border border-border bg-card/45 p-5 shadow-sm"
+                className="flex flex-col justify-between gap-4 rounded-xl border border-border bg-card/45 p-5 shadow-sm sm:flex-row sm:items-center"
               >
                 <div className="space-y-1">
-                  <span className="text-xs text-muted-foreground flex items-center gap-1 font-mono">
+                  <span className="flex items-center gap-1 font-mono text-xs text-muted-foreground">
                     <Clock className="h-3 w-3" /> Booking Ref: {b.bookingNumber}
                   </span>
-                  <div className="font-semibold text-foreground text-sm">
+                  <div className="text-sm font-semibold text-foreground">
                     {b.vehicle.brand.name} {b.vehicle.model.name}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    {new Date(b.pickupDate).toLocaleDateString()} to {new Date(b.returnDate).toLocaleDateString()}
+                    {new Date(b.pickupDate).toLocaleDateString()} to{" "}
+                    {new Date(b.returnDate).toLocaleDateString()}
                   </div>
                 </div>
                 <Link href={`/bookings/${b.id}`}>
                   <Button size="sm" variant="outline" className="group">
-                    Details <ArrowUpRight className="ml-1 h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    Details{" "}
+                    <ArrowUpRight className="ml-1 h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                   </Button>
                 </Link>
               </div>

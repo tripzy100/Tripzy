@@ -3,7 +3,20 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Car, LayoutDashboard, User, ShieldCheck, Calendar, Wallet, LifeBuoy, Menu, LogOut, Award, Shield } from "lucide-react";
+import {
+  Car,
+  LayoutDashboard,
+  User,
+  ShieldCheck,
+  Calendar,
+  Wallet,
+  LifeBuoy,
+  Menu,
+  LogOut,
+  Award,
+  Shield,
+  Sparkles,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
@@ -15,6 +28,7 @@ const navItems = [
   { label: "Account Security", href: "/dashboard/security", icon: Shield },
   { label: "Profile Settings", href: "/dashboard/profile", icon: User },
   { label: "Support Tickets", href: "/dashboard/support", icon: LifeBuoy },
+  { label: "AI Copilot", href: "/dashboard/assistant", icon: Sparkles },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -24,16 +38,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex min-h-screen bg-muted/20">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex flex-col w-64 border-r border-border bg-card p-6 space-y-8 sticky top-0 h-screen">
+      <aside className="sticky top-0 hidden h-screen w-64 flex-col space-y-8 border-r border-border bg-card p-6 lg:flex">
         <Link href="/" className="flex items-center gap-2">
           <Car className="h-6 w-6 text-foreground" />
-          <span className="font-display text-xl font-bold tracking-tight text-foreground">Tripzy</span>
+          <span className="font-display text-xl font-bold tracking-tight text-foreground">
+            TRIPZY
+          </span>
         </Link>
 
         {/* Profile Card Summary */}
-        <div className="rounded-lg bg-muted/40 p-4 border border-border/50">
-          <div className="font-semibold text-sm text-foreground">Sachit Bhatia</div>
-          <div className="text-xs text-muted-foreground truncate">sachit@example.com</div>
+        <div className="rounded-lg border border-border/50 bg-muted/40 p-4">
+          <div className="text-sm font-semibold text-foreground">Sachit Bhatia</div>
+          <div className="truncate text-xs text-muted-foreground">sachit@example.com</div>
         </div>
 
         {/* Nav Links */}
@@ -45,8 +61,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                  isActive ? "bg-primary text-primary-foreground font-semibold" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                  isActive
+                    ? "bg-primary font-semibold text-primary-foreground"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 }`}
               >
                 <Icon className="h-4.5 w-4.5" /> {item.label}
@@ -56,22 +74,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </nav>
 
         {/* Logout */}
-        <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10">
+        <Button
+          variant="ghost"
+          className="w-full justify-start text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+        >
           <LogOut className="mr-2 h-4 w-4" /> Sign Out
         </Button>
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex min-w-0 flex-1 flex-col">
         {/* Mobile Header Bar */}
-        <header className="lg:hidden flex items-center justify-between border-b border-border bg-card px-6 py-4 sticky top-0 z-30">
+        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-card px-6 py-4 lg:hidden">
           <Link href="/" className="flex items-center gap-2">
             <Car className="h-5 w-5 text-foreground" />
-            <span className="font-display font-bold text-foreground">Tripzy</span>
+            <span className="font-display font-bold text-foreground">TRIPZY</span>
           </Link>
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground rounded"
+            className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
             aria-label="Toggle menu"
           >
             <Menu className="h-5 w-5" />
@@ -80,7 +101,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Mobile Navigation Panel */}
         {mobileOpen && (
-          <nav className="lg:hidden border-b border-border bg-card px-6 py-4 space-y-2">
+          <nav className="space-y-2 border-b border-border bg-card px-6 py-4 lg:hidden">
             {navItems.map((item) => {
               const Icon = item.icon;
               return (
@@ -88,7 +109,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   key={item.href}
                   href={item.href}
                   onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-3 px-3 py-2 text-sm text-foreground/80 hover:bg-muted rounded"
+                  className="flex items-center gap-3 rounded px-3 py-2 text-sm text-foreground/80 hover:bg-muted"
                 >
                   <Icon className="h-4.5 w-4.5 text-muted-foreground" /> {item.label}
                 </Link>
@@ -98,9 +119,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         )}
 
         {/* Dynamic page children */}
-        <main className="flex-1 p-6 md:p-8 lg:p-10 max-w-6xl w-full mx-auto">
-          {children}
-        </main>
+        <main className="mx-auto w-full max-w-6xl flex-1 p-6 md:p-8 lg:p-10">{children}</main>
       </div>
     </div>
   );

@@ -11,14 +11,17 @@ export default async function AdminCouponsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-display text-2xl font-bold tracking-tight text-gradient">Promotional Vouchers</h1>
-        <p className="text-sm text-muted-foreground mt-2">
-          Manage flat discounts, percentage referral vouchers, minimum booking value restrictions, and coupon campaigns.
+        <h1 className="text-gradient font-display text-2xl font-bold tracking-tight">
+          Promotional Vouchers
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Manage flat discounts, percentage referral vouchers, minimum booking value restrictions,
+          and coupon campaigns.
         </p>
       </div>
 
-      <div className="rounded-xl border border-border bg-card/30 overflow-hidden">
-        <table className="w-full text-left border-collapse text-sm">
+      <div className="overflow-hidden rounded-xl border border-border bg-card/30">
+        <table className="w-full border-collapse text-left text-sm">
           <thead>
             <tr className="border-b border-border bg-muted/40 text-xs font-semibold uppercase text-muted-foreground">
               <th className="p-4">Coupon Code</th>
@@ -32,7 +35,7 @@ export default async function AdminCouponsPage() {
             {coupons.length > 0 ? (
               coupons.map((c) => (
                 <tr key={c.id} className="hover:bg-muted/10">
-                  <td className="p-4 font-semibold text-foreground flex items-center gap-1.5 font-mono">
+                  <td className="flex items-center gap-1.5 p-4 font-mono font-semibold text-foreground">
                     <Tag className="h-3.5 w-3.5 text-primary" /> {c.code}
                   </td>
                   <td className="p-4">{c.type}</td>
@@ -44,11 +47,11 @@ export default async function AdminCouponsPage() {
                   </td>
                   <td className="p-4">
                     {c.active ? (
-                      <span className="inline-flex rounded-full bg-emerald-500/10 text-emerald-500 p-1">
+                      <span className="inline-flex rounded-full bg-emerald-500/10 p-1 text-emerald-500">
                         <Check className="h-3.5 w-3.5" />
                       </span>
                     ) : (
-                      <span className="inline-flex rounded-full bg-destructive/10 text-destructive p-1">
+                      <span className="inline-flex rounded-full bg-destructive/10 p-1 text-destructive">
                         <X className="h-3.5 w-3.5" />
                       </span>
                     )}
@@ -57,7 +60,7 @@ export default async function AdminCouponsPage() {
               ))
             ) : (
               <tr>
-                <td colSpan={5} className="text-center p-8 text-xs text-muted-foreground">
+                <td colSpan={5} className="p-8 text-center text-xs text-muted-foreground">
                   No promotional voucher rules configured in database.
                 </td>
               </tr>

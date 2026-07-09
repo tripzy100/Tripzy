@@ -61,7 +61,7 @@ export function MobileDrawer({ isOpen, onClose, theme, toggleTheme }: MobileDraw
               <ul className="space-y-6">
                 <li>
                   <Link
-                    href="/vehicles"
+                    href="/cars"
                     onClick={onClose}
                     className="block font-display text-lg font-medium text-foreground hover:text-muted-foreground"
                   >
@@ -126,10 +126,14 @@ export function MobileDrawer({ isOpen, onClose, theme, toggleTheme }: MobileDraw
               </button>
 
               <div className="grid grid-cols-2 gap-3">
-                <Button variant="outline" className="w-full">
-                  Sign In
-                </Button>
-                <Button className="w-full">Sign Up</Button>
+                <Link href="/auth/login" className="w-full">
+                  <Button variant="outline" className="w-full">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/auth/register" className="w-full">
+                  <Button className="w-full">Sign Up</Button>
+                </Link>
               </div>
             </div>
           </motion.div>

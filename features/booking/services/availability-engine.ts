@@ -8,7 +8,7 @@ import { BookingStatus } from "@prisma/client";
 export async function checkVehicleAvailability(
   vehicleId: string,
   pickupDate: Date,
-  returnDate: Date
+  returnDate: Date,
 ): Promise<boolean> {
   // Apply a 3-hour buffer to pickup and return windows
   const BUFFER_MS = 3 * 60 * 60 * 1000;
@@ -20,11 +20,7 @@ export async function checkVehicleAvailability(
     where: {
       vehicleId,
       status: {
-        in: [
-          BookingStatus.CONFIRMED,
-          BookingStatus.ONGOING,
-          BookingStatus.PENDING,
-        ],
+        in: [BookingStatus.CONFIRMED, BookingStatus.ONGOING, BookingStatus.PENDING],
       },
       OR: [
         {

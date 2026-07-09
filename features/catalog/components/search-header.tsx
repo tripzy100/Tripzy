@@ -11,7 +11,7 @@ interface SearchHeaderProps {
 
 export function SearchHeader({ value, onChange, currentFilters, setFilter }: SearchHeaderProps) {
   return (
-    <div className="flex flex-col md:flex-row gap-4 w-full p-4 border border-border rounded-xl bg-card/20 mb-6">
+    <div className="mb-6 flex w-full flex-col gap-4 rounded-xl border border-border bg-card/20 p-4 md:flex-row">
       {/* Search Input */}
       <div className="relative flex-1">
         <input
@@ -19,7 +19,7 @@ export function SearchHeader({ value, onChange, currentFilters, setFilter }: Sea
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="Search brand, model, or variant (e.g. Thar, Tesla Plaid)..."
-          className="w-full rounded-lg border border-input bg-card pl-10 pr-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+          className="w-full rounded-lg border border-input bg-card py-2 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
         />
         <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-muted-foreground" />
       </div>
@@ -29,12 +29,11 @@ export function SearchHeader({ value, onChange, currentFilters, setFilter }: Sea
         <select
           value={currentFilters.get("city") || ""}
           onChange={(e) => setFilter("city", e.target.value || null)}
-          className="w-full rounded-lg border border-input bg-card pl-10 pr-4 py-2 text-sm text-foreground focus:outline-none appearance-none"
+          className="w-full appearance-none rounded-lg border border-input bg-card py-2 pl-10 pr-4 text-sm text-foreground focus:outline-none"
         >
           <option value="">All Cities</option>
-          <option value="Bengaluru">Bengaluru</option>
-          <option value="Mumbai">Mumbai</option>
-          <option value="Pune">Pune</option>
+          <option value="Ranchi">Ranchi</option>
+          <option value="Ranchi Airport">Ranchi Airport</option>
         </select>
         <MapPin className="absolute left-3.5 top-2.5 h-4 w-4 text-muted-foreground" />
       </div>

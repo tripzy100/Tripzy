@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { verifyCashfreeSignature, generateCashfreeMockSignature } from "../features/payment/services/cashfree";
+import {
+  verifyCashfreeSignature,
+  generateCashfreeMockSignature,
+} from "../features/payment/services/cashfree";
 import { calculateTaxSplit } from "../features/payment/services/tax-compliance";
 
 describe("Tripzy Cashfree Webhook Signatures", () => {
@@ -37,7 +40,7 @@ describe("Tripzy Compliance GST splits Calculations", () => {
 
   it("calculates IGST when states differ", () => {
     const amount = 10000;
-    // Vehicle pickup is Maharashtra, but customer profile state is Delhi (DL)
+    // Vehicle pickup is Jharkhand, but customer profile state is different (DL)
     const tax = calculateTaxSplit(amount, "MH", "DL");
 
     expect(tax.totalTax).toBe(1800); // 18% of 10000

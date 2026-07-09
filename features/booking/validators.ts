@@ -1,17 +1,19 @@
 import { z } from "zod";
 
-export const bookingRequestSchema = z.object({
-  vehicleId: z.string().uuid("Vehicle ID must be a valid UUID"),
-  pickupBranchId: z.string().uuid("Pickup branch must be a valid UUID"),
-  dropBranchId: z.string().uuid("Drop branch must be a valid UUID"),
-  pickupDate: z.coerce.date().refine((d) => d > new Date(), {
-    message: "Pickup date must be in the future",
-  }),
-  returnDate: z.coerce.date(),
-}).refine((data) => data.returnDate > data.pickupDate, {
-  message: "Return date must be after pickup date",
-  path: ["returnDate"],
-});
+export const bookingRequestSchema = z
+  .object({
+    vehicleId: z.string().uuid("Vehicle ID must be a valid UUID"),
+    pickupBranchId: z.string().uuid("Pickup branch must be a valid UUID"),
+    dropBranchId: z.string().uuid("Drop branch must be a valid UUID"),
+    pickupDate: z.coerce.date().refine((d) => d > new Date(), {
+      message: "Pickup date must be in the future",
+    }),
+    returnDate: z.coerce.date(),
+  })
+  .refine((data) => data.returnDate > data.pickupDate, {
+    message: "Return date must be after pickup date",
+    path: ["returnDate"],
+  });
 
 export type BookingRequestValues = z.infer<typeof bookingRequestSchema>;
 

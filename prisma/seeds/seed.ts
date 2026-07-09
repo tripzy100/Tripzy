@@ -39,13 +39,37 @@ async function main() {
   console.log("  - Seeding Permissions...");
   const permissionsData = [
     { code: "USER_READ", name: "Read Users", description: "View client listings and profiles." },
-    { code: "USER_WRITE", name: "Manage Users", description: "Modify client records and KYC states." },
-    { code: "VEHICLE_READ", name: "Read Vehicles", description: "Browse and inspect vehicle metrics." },
-    { code: "VEHICLE_WRITE", name: "Manage Vehicles", description: "Modify inventory details, prices, and calendars." },
-    { code: "BOOKING_READ", name: "Read Bookings", description: "View booking transaction ledgers." },
-    { code: "BOOKING_WRITE", name: "Manage Bookings", description: "Edit, extend, or reject reservation requests." },
+    {
+      code: "USER_WRITE",
+      name: "Manage Users",
+      description: "Modify client records and KYC states.",
+    },
+    {
+      code: "VEHICLE_READ",
+      name: "Read Vehicles",
+      description: "Browse and inspect vehicle metrics.",
+    },
+    {
+      code: "VEHICLE_WRITE",
+      name: "Manage Vehicles",
+      description: "Modify inventory details, prices, and calendars.",
+    },
+    {
+      code: "BOOKING_READ",
+      name: "Read Bookings",
+      description: "View booking transaction ledgers.",
+    },
+    {
+      code: "BOOKING_WRITE",
+      name: "Manage Bookings",
+      description: "Edit, extend, or reject reservation requests.",
+    },
     { code: "PAYMENT_READ", name: "Read Payments", description: "View transactional invoices." },
-    { code: "SETTINGS_WRITE", name: "Manage Settings", description: "Update global business parameters." },
+    {
+      code: "SETTINGS_WRITE",
+      name: "Manage Settings",
+      description: "Update global business parameters.",
+    },
   ];
 
   const permissionsMap = new Map<string, any>();
@@ -88,36 +112,28 @@ async function main() {
     },
   });
 
-  const stateKA = await db.state.create({
+  const stateJH = await db.state.create({
     data: {
       countryId: country.id,
-      name: "Karnataka",
-      code: "KA",
+      name: "Jharkhand",
+      code: "JH",
     },
   });
 
-  const stateMH = await db.state.create({
+  const cityRanchi = await db.city.create({
     data: {
-      countryId: country.id,
-      name: "Maharashtra",
-      code: "MH",
-    },
-  });
-
-  const cityBLR = await db.city.create({
-    data: {
-      stateId: stateKA.id,
-      name: "Bengaluru",
-      code: "BLR",
+      stateId: stateJH.id,
+      name: "Ranchi",
+      code: "RNC",
       isActive: true,
     },
   });
 
-  const cityMUM = await db.city.create({
+  const cityRanchiAirport = await db.city.create({
     data: {
-      stateId: stateMH.id,
-      name: "Mumbai",
-      code: "MUM",
+      stateId: stateJH.id,
+      name: "Ranchi Airport",
+      code: "IXR",
       isActive: true,
     },
   });
@@ -128,7 +144,6 @@ async function main() {
     { name: "Sedan", slug: "sedan", description: "Comfortable standard passenger vehicles." },
     { name: "SUV", slug: "suv", description: "Spacious utility sport utility vehicles." },
     { name: "Hatchback", slug: "hatchback", description: "Compact city cruisers." },
-    { name: "Luxury", slug: "luxury", description: "Premium executive vehicles." },
     { name: "Electric", slug: "electric", description: "Zero-emission next-gen vehicles." },
   ];
 
@@ -143,10 +158,30 @@ async function main() {
   // 6. Seed System Settings
   console.log("  - Seeding System Settings...");
   const settings = [
-    { key: "SITE_ACTIVE", value: "true", type: "BOOLEAN", description: "Global platform operational state." },
-    { key: "DEFAULT_TAX_RATE", value: "18.0", type: "NUMBER", description: "Standard default tax percentage." },
-    { key: "MAINTENANCE_MODE", value: "false", type: "BOOLEAN", description: "Redirect traffic to maintenance view." },
-    { key: "BASE_CURRENCY", value: "INR", type: "STRING", description: "Platform base transaction currency." },
+    {
+      key: "SITE_ACTIVE",
+      value: "true",
+      type: "BOOLEAN",
+      description: "Global platform operational state.",
+    },
+    {
+      key: "DEFAULT_TAX_RATE",
+      value: "18.0",
+      type: "NUMBER",
+      description: "Standard default tax percentage.",
+    },
+    {
+      key: "MAINTENANCE_MODE",
+      value: "false",
+      type: "BOOLEAN",
+      description: "Redirect traffic to maintenance view.",
+    },
+    {
+      key: "BASE_CURRENCY",
+      value: "INR",
+      type: "STRING",
+      description: "Platform base transaction currency.",
+    },
   ];
 
   for (const set of settings) {
@@ -167,19 +202,22 @@ async function main() {
   const faqs = [
     {
       question: "What documents are required to book a car?",
-      answer: "A valid original driving license and an official national identity card (like Aadhar card or Passport) are required to complete KYC checks.",
+      answer:
+        "A valid original driving license and an official national identity card (like Aadhar card or Passport) are required to complete KYC checks.",
       category: "KYC & Verification",
       sortOrder: 1,
     },
     {
       question: "Is there a security deposit requirement?",
-      answer: "Yes, a fully refundable security deposit is hold-captured at checkout. It is refunded within 5-7 business days of safe vehicle return.",
+      answer:
+        "Yes, a fully refundable security deposit is hold-captured at checkout. It is refunded within 5-7 business days of safe vehicle return.",
       category: "Billing & Refund",
       sortOrder: 2,
     },
     {
       question: "What is the fuel policy?",
-      answer: "We support a like-to-like policy. The vehicle should be returned with the same fuel level as it was at the time of pickup.",
+      answer:
+        "We support a like-to-like policy. The vehicle should be returned with the same fuel level as it was at the time of pickup.",
       category: "Usage Rules",
       sortOrder: 3,
     },
@@ -367,7 +405,7 @@ async function main() {
       create: {
         name: item.category,
         slug: item.category.toLowerCase().replace(/\s+/g, "-"),
-        description: `${item.category} fleet category.`,
+        description: `${item.category} car category.`,
       },
     });
 

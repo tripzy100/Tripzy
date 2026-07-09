@@ -35,7 +35,9 @@ export function BookingDetailView({ booking }: DetailProps) {
 
   const durationDays = Math.max(
     1,
-    Math.ceil((booking.returnDate.getTime() - booking.pickupDate.getTime()) / (1000 * 60 * 60 * 24))
+    Math.ceil(
+      (booking.returnDate.getTime() - booking.pickupDate.getTime()) / (1000 * 60 * 60 * 24),
+    ),
   );
 
   const pricingBreakdown = calculatePricing(durationDays, dailyRate, deposit);
@@ -77,34 +79,41 @@ export function BookingDetailView({ booking }: DetailProps) {
   return (
     <div className="grid gap-8 md:grid-cols-3">
       {/* Summary Box */}
-      <div className="md:col-span-2 space-y-6">
-        <div className="rounded-xl border border-border bg-card/30 p-6 space-y-4">
+      <div className="space-y-6 md:col-span-2">
+        <div className="space-y-4 rounded-xl border border-border bg-card/30 p-6">
           <div className="flex items-center justify-between">
             <h1 className="font-display text-xl font-bold">Booking Details</h1>
-            <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-              status === "CONFIRMED" ? "bg-emerald-500/10 text-emerald-500" : "bg-amber-500/10 text-amber-500"
-            }`}>
+            <span
+              className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                status === "CONFIRMED"
+                  ? "bg-emerald-500/10 text-emerald-500"
+                  : "bg-amber-500/10 text-amber-500"
+              }`}
+            >
               {status}
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-4 text-sm text-foreground/80">
             <div>
-              <span className="text-xs text-muted-foreground block">Vehicle</span>
-              <span className="font-semibold">{booking.vehicle.brand.name} {booking.vehicle.model.name}</span>
+              <span className="block text-xs text-muted-foreground">Vehicle</span>
+              <span className="font-semibold">
+                {booking.vehicle.brand.name} {booking.vehicle.model.name}
+              </span>
             </div>
             <div>
-              <span className="text-xs text-muted-foreground block">City Route</span>
-              <span className="font-semibold flex items-center gap-1">
-                <MapPin className="h-3.5 w-3.5" /> {booking.pickupLocation.name} &rarr; {booking.dropLocation.name}
+              <span className="block text-xs text-muted-foreground">City Route</span>
+              <span className="flex items-center gap-1 font-semibold">
+                <MapPin className="h-3.5 w-3.5" /> {booking.pickupLocation.name} &rarr;{" "}
+                {booking.dropLocation.name}
               </span>
             </div>
           </div>
         </div>
 
         {/* Pricing breakdown list */}
-        <div className="rounded-xl border border-border bg-card/30 p-6 space-y-4">
-          <h3 className="font-display font-semibold text-base">Cost Breakdown</h3>
+        <div className="space-y-4 rounded-xl border border-border bg-card/30 p-6">
+          <h3 className="font-display text-base font-semibold">Cost Breakdown</h3>
           <div className="space-y-3 text-sm text-muted-foreground">
             <div className="flex justify-between">
               <span>Rental duration ({pricingBreakdown.rentalDays} Days)</span>
@@ -120,7 +129,7 @@ export function BookingDetailView({ booking }: DetailProps) {
               <span>GST (18% standard)</span>
               <span>&#8377;{pricingBreakdown.taxAmount}</span>
             </div>
-            <div className="flex justify-between border-t border-border/50 pt-3 text-foreground font-bold">
+            <div className="flex justify-between border-t border-border/50 pt-3 font-bold text-foreground">
               <span>Total estimate</span>
               <span>&#8377;{pricingBreakdown.totalEstimate}</span>
             </div>
@@ -129,13 +138,13 @@ export function BookingDetailView({ booking }: DetailProps) {
       </div>
 
       {/* Lock Sidebar triggers */}
-      <div className="h-fit rounded-xl border border-border bg-card/45 p-6 space-y-4">
+      <div className="h-fit space-y-4 rounded-xl border border-border bg-card/45 p-6">
         {status === "PENDING" && (
-          <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-4 text-center space-y-2">
-            <span className="text-xs font-semibold text-amber-500 flex items-center justify-center gap-1">
+          <div className="space-y-2 rounded-lg border border-amber-500/20 bg-amber-500/5 p-4 text-center">
+            <span className="flex items-center justify-center gap-1 text-xs font-semibold text-amber-500">
               <Clock className="h-4 w-4" /> Checkout Reservation Lock
             </span>
-            <div className="text-xl font-bold font-mono text-foreground">
+            <div className="font-mono text-xl font-bold text-foreground">
               {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, "0")}
             </div>
             <p className="text-[10px] text-muted-foreground">
@@ -155,7 +164,11 @@ export function BookingDetailView({ booking }: DetailProps) {
         )}
 
         {status !== "CANCELLED" && (
-          <Button onClick={handleCancel} variant="ghost" className="w-full text-destructive hover:bg-destructive/10">
+          <Button
+            onClick={handleCancel}
+            variant="ghost"
+            className="w-full text-destructive hover:bg-destructive/10"
+          >
             <Ban className="mr-1.5 h-4 w-4" /> Cancel Booking
           </Button>
         )}

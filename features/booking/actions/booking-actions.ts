@@ -2,26 +2,24 @@
 
 import { db } from "@/lib/db";
 import { BookingStatus } from "@prisma/client";
-import { BookingRequestValues, ExtensionRequestValues, CancellationRequestValues } from "../validators";
-import { acquireLock, releaseLock } from "../services/reservation-locks";
+import {
+  BookingRequestValues,
+  ExtensionRequestValues,
+  CancellationRequestValues,
+} from "../validators";
 import { checkVehicleAvailability, isValidBusinessHours } from "../services/availability-engine";
 
-/**
- * Creates a PENDING booking and acquires a Redis checkout lock.
- */
 export async function createDraftBooking(values: BookingRequestValues) {
   if (!isValidBusinessHours(values.pickupDate, values.returnDate)) {
     return { success: false, error: "Timings must fall within 7AM-11PM" };
   }
 
-  const lockAcquired = await acquireLock(values.vehicleId);
-  if (!lockAcquired) {
-    return { success: false, error: "Vehicle is currently locked by another checkout" };
-  }
-
-  const available = await checkVehicleAvailability(values.vehicleId, values.pickupDate, values.returnDate);
+  const available = await checkVehicleAvailability(
+    values.vehicleId,
+    values.pickupDate,
+    values.returnDate,
+  );
   if (!available) {
-    await releaseLock(values.vehicleId);
     return { success: false, error: "Vehicle is unavailable for this date window" };
   }
 
@@ -51,7 +49,7 @@ export async function createDraftBooking(values: BookingRequestValues) {
         data: {
           bookingId: book.id,
           statusChangedTo: BookingStatus.PENDING,
-          remarks: "Draft reservation check lock created",
+          remarks: "Draft reservation created",
           actionBy: mockUser.id,
         },
       });
@@ -61,14 +59,10 @@ export async function createDraftBooking(values: BookingRequestValues) {
 
     return { success: true, bookingId: result.id };
   } catch (err) {
-    await releaseLock(values.vehicleId);
     return { success: false, error: "Failed to allocate reservation" };
   }
 }
 
-/**
- * Confirms a booking reservation and releases the Redis lock.
- */
 export async function confirmBooking(id: string) {
   try {
     const book = await db.booking.findUnique({ where: { id } });
@@ -90,16 +84,12 @@ export async function confirmBooking(id: string) {
       });
     });
 
-    await releaseLock(book.vehicleId);
     return { success: true };
   } catch (error) {
     return { success: false, error: "Failed to confirm reservation" };
   }
 }
 
-/**
- * Handles extension requests, checking for schedule overrides.
- */
 export async function requestExtension(values: ExtensionRequestValues) {
   try {
     const book = await db.booking.findUnique({ where: { id: values.bookingId } });
@@ -114,7 +104,7 @@ export async function requestExtension(values: ExtensionRequestValues) {
     await db.$transaction(async (tx) => {
       const extraBase = values.extraDays * 3000;
       const extraTax = extraBase * 0.18;
-      
+
       await tx.booking.update({
         where: { id: values.bookingId },
         data: {
@@ -141,9 +131,6 @@ export async function requestExtension(values: ExtensionRequestValues) {
   }
 }
 
-/**
- * Cancels a booking, logging timelines.
- */
 export async function cancelBooking(values: CancellationRequestValues) {
   try {
     const book = await db.booking.findUnique({ where: { id: values.bookingId } });
@@ -165,7 +152,6 @@ export async function cancelBooking(values: CancellationRequestValues) {
       });
     });
 
-    await releaseLock(book.vehicleId);
     return { success: true };
   } catch (error) {
     return { success: false, error: "Cancellation failed" };

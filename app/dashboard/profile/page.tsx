@@ -30,23 +30,27 @@ export default function ProfilePage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-display text-2xl font-bold tracking-tight text-gradient">Profile & Session Settings</h1>
-        <p className="text-sm text-muted-foreground mt-2">
+        <h1 className="text-gradient font-display text-2xl font-bold tracking-tight">
+          Profile & Session Settings
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
           Update contact details, save emergency references, and review active session connections.
         </p>
       </div>
 
       <div className="grid gap-8 md:grid-cols-3">
         {/* Profile update form */}
-        <div className="md:col-span-2 rounded-xl border border-border bg-card/30 p-6">
+        <div className="rounded-xl border border-border bg-card/30 p-6 md:col-span-2">
           <form onSubmit={handleSave} className="space-y-4">
-            <h3 className="font-display text-base font-bold text-foreground flex items-center gap-1.5 mb-6">
+            <h3 className="mb-6 flex items-center gap-1.5 font-display text-base font-bold text-foreground">
               Contact Information
             </h3>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold uppercase text-muted-foreground mb-1">Full Name</label>
+                <label className="mb-1 block text-xs font-semibold uppercase text-muted-foreground">
+                  Full Name
+                </label>
                 <input
                   type="text"
                   defaultValue="Sachit Bhatia"
@@ -54,16 +58,20 @@ export default function ProfilePage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase text-muted-foreground mb-1">Email Address</label>
+                <label className="mb-1 block text-xs font-semibold uppercase text-muted-foreground">
+                  Email Address
+                </label>
                 <input
                   type="email"
                   defaultValue="sachit@example.com"
                   disabled
-                  className="w-full rounded-lg border border-input bg-card/50 px-3 py-2 text-sm text-muted-foreground cursor-not-allowed"
+                  className="w-full cursor-not-allowed rounded-lg border border-input bg-card/50 px-3 py-2 text-sm text-muted-foreground"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase text-muted-foreground mb-1">Phone Number</label>
+                <label className="mb-1 block text-xs font-semibold uppercase text-muted-foreground">
+                  Phone Number
+                </label>
                 <input
                   type="tel"
                   defaultValue="+91 98765 43210"
@@ -71,7 +79,9 @@ export default function ProfilePage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase text-muted-foreground mb-1">Emergency Contact</label>
+                <label className="mb-1 block text-xs font-semibold uppercase text-muted-foreground">
+                  Emergency Contact
+                </label>
                 <input
                   type="tel"
                   placeholder="Contact coordinates"
@@ -81,7 +91,7 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <div className="flex justify-end pt-4 border-t border-border mt-6">
+            <div className="mt-6 flex justify-end border-t border-border pt-4">
               <Button type="submit" isLoading={loading}>
                 <Save className="mr-1.5 h-4 w-4" /> Save Modifications
               </Button>
@@ -90,24 +100,34 @@ export default function ProfilePage() {
         </div>
 
         {/* Sessions logs */}
-        <div className="rounded-xl border border-border bg-card/30 p-6 space-y-6">
-          <h3 className="font-display text-base font-bold text-foreground flex items-center gap-1.5">
+        <div className="space-y-6 rounded-xl border border-border bg-card/30 p-6">
+          <h3 className="flex items-center gap-1.5 font-display text-base font-bold text-foreground">
             <KeyRound className="h-4 w-4" /> Device Connections
           </h3>
 
           <div className="space-y-4">
             {sessions.map((s) => (
-              <div key={s.id} className="flex items-center justify-between border-b border-border/50 pb-3">
+              <div
+                key={s.id}
+                className="flex items-center justify-between border-b border-border/50 pb-3"
+              >
                 <div className="space-y-1">
-                  <div className="text-sm font-semibold text-foreground flex items-center gap-1">
+                  <div className="flex items-center gap-1 text-sm font-semibold text-foreground">
                     <Laptop className="h-3.5 w-3.5 text-muted-foreground" /> {s.browser}
                   </div>
-                  <div className="text-[10px] text-muted-foreground font-mono">{s.ip}</div>
+                  <div className="font-mono text-[10px] text-muted-foreground">{s.ip}</div>
                 </div>
                 {s.active ? (
-                  <span className="text-[10px] text-emerald-500 font-semibold uppercase">Current</span>
+                  <span className="text-[10px] font-semibold uppercase text-emerald-500">
+                    Current
+                  </span>
                 ) : (
-                  <Button onClick={() => revokeSession(s.id)} variant="ghost" size="sm" className="text-xs text-destructive hover:bg-destructive/10">
+                  <Button
+                    onClick={() => revokeSession(s.id)}
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs text-destructive hover:bg-destructive/10"
+                  >
                     Revoke
                   </Button>
                 )}

@@ -7,6 +7,7 @@ This document describes the design decisions, relation structures, and key mappi
 ## 🏛️ Relationship Design Patterns
 
 ### 1. One-to-One Relationships (1:1)
+
 - **User ↔ Profile**: A user account maps to exactly one personal profile containing metadata (first name, last name, avatar).
 - **User ↔ DrivingLicence**: A user is associated with a single verified driving licence vector to enforce KYC constraints.
 - **User ↔ Wallet**: A customer is associated with exactly one digital balance wallet for cancellations and credit holds.
@@ -14,12 +15,14 @@ This document describes the design decisions, relation structures, and key mappi
 - **Prisma implementation**: Defined using a unique index constraints on the foreign key field (`userId String @unique`).
 
 ### 2. One-to-Many Relationships (1:N)
+
 - **City ↔ PickupLocation**: A city houses multiple pickup and drop spots.
 - **Vehicle ↔ VehicleImage**: A vehicle is associated with multiple sorted images.
 - **User ↔ Booking**: A customer initiates multiple booking records over time.
 - **Booking ↔ BookingTimeline**: A booking logs progress steps as a sequence of events.
 
 #### Advanced Operational Relationships
+
 - **Vehicle ↔ GpsTrackerRecord & VehicleTelematics**: High-frequency IoT logging streams (lat/lng, speed, tire pressure, error logs).
 - **Vehicle ↔ VehicleInspectionChecklist & CleaningLog**: Standard operations workflows checking cleaning states and mechanical safety parameters.
 - **User ↔ UserSubscription**: Subscriptions associating users with plan features.
@@ -29,7 +32,9 @@ This document describes the design decisions, relation structures, and key mappi
 - **VehiclePricing ↔ AiPricingRecommendation**: AI model recommendations suggesting daily rates based on regional demand multipliers.
 
 ### 3. Many-to-Many Relationships (M:N)
+
 To optimize index scans and scale query limits, we use explicit, normalized joint tables for many-to-many relationships instead of implicit arrays:
+
 - **Role ↔ Permission** (via `RolePermission` join table): Connects access flags to standard system roles.
 - **User ↔ Role** (via `UserRole` join table): Supports multiple roles per user.
 - **Vehicle ↔ VehicleFeature** (via `VehicleFeaturesOnVehicles` join table): Maps amenities (GPS, Bluetooth, Leather Seats) to active vehicles.
@@ -66,6 +71,7 @@ graph TD
 ## 🔑 Composite Key Mappings
 
 We use composite keys (`@@id`) to enforce uniqueness and optimize storage space for relationship tables:
+
 - **`RolePermission`**: Primary key is a composite of `[roleId, permissionId]`.
 - **`UserRole`**: Primary key is a composite of `[userId, roleId]`.
 - **`VehicleFeaturesOnVehicles`**: Primary key is a composite of `[vehicleId, featureId]`.

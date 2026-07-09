@@ -36,18 +36,18 @@ export function KycReviewList({ initialUsers }: { initialUsers: UserItem[] }) {
       {users.map((u) => {
         const name = u.profile ? `${u.profile.firstName} ${u.profile.lastName}` : "Customer";
         return (
-          <div key={u.id} className="rounded-xl border border-border bg-card/30 p-6 space-y-4">
-            <div className="flex justify-between items-start">
+          <div key={u.id} className="space-y-4 rounded-xl border border-border bg-card/30 p-6">
+            <div className="flex items-start justify-between">
               <div>
-                <h3 className="font-display font-semibold text-foreground text-base">{name}</h3>
-                <span className="text-xs text-muted-foreground block">{u.email}</span>
+                <h3 className="font-display text-base font-semibold text-foreground">{name}</h3>
+                <span className="block text-xs text-muted-foreground">{u.email}</span>
               </div>
-              <span className="inline-flex rounded-full bg-amber-500/10 text-amber-500 px-2.5 py-0.5 text-xs font-semibold">
+              <span className="inline-flex rounded-full bg-amber-500/10 px-2.5 py-0.5 text-xs font-semibold text-amber-500">
                 PENDING REVIEW
               </span>
             </div>
 
-            <div className="rounded-lg bg-muted/40 p-4 border border-border/50 space-y-2 text-xs">
+            <div className="space-y-2 rounded-lg border border-border/50 bg-muted/40 p-4 text-xs">
               <div className="flex items-center gap-1.5 text-muted-foreground">
                 <FileText className="h-4 w-4" /> DL Document Reference:
               </div>
@@ -57,8 +57,13 @@ export function KycReviewList({ initialUsers }: { initialUsers: UserItem[] }) {
             </div>
 
             {/* Actions panel */}
-            <div className="flex gap-2 justify-end pt-4 border-t border-border/60">
-              <Button onClick={() => handleReview(u.id, false)} variant="outline" size="sm" className="text-destructive hover:bg-destructive/10 border-destructive/20">
+            <div className="flex justify-end gap-2 border-t border-border/60 pt-4">
+              <Button
+                onClick={() => handleReview(u.id, false)}
+                variant="outline"
+                size="sm"
+                className="border-destructive/20 text-destructive hover:bg-destructive/10"
+              >
                 <X className="mr-1 h-3.5 w-3.5" /> Reject
               </Button>
               <Button onClick={() => handleReview(u.id, true)} size="sm">

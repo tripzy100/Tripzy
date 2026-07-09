@@ -12,11 +12,13 @@ export default function Faqs() {
   };
 
   return (
-    <section className="mx-auto max-w-4xl px-6 py-20 lg:py-28">
-      <div className="text-center max-w-2xl mx-auto mb-16">
-        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Common Queries</span>
-        <h2 className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl text-gradient">
-          Frequently Asked Questions.
+    <section className="mx-auto max-w-4xl px-6 py-12 lg:py-16">
+      <div className="mx-auto mb-16 max-w-2xl text-center">
+        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Self Drive Car Rental FAQs
+        </span>
+        <h2 className="text-gradient mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+          Frequently asked questions about car rental
         </h2>
       </div>
 
@@ -26,7 +28,7 @@ export default function Faqs() {
           return (
             <div
               key={idx}
-              className="rounded-xl border border-border bg-card/30 overflow-hidden transition-all duration-300"
+              className="overflow-hidden rounded-xl border border-border bg-card/30 transition-all duration-300"
             >
               {/* Accordion trigger button */}
               <button
@@ -35,7 +37,11 @@ export default function Faqs() {
                 className="flex w-full items-center justify-between p-5 text-left font-display font-medium text-foreground hover:bg-card/75"
               >
                 <span>{item.question}</span>
-                {isOpen ? <Minus className="h-4 w-4 shrink-0" /> : <Plus className="h-4 w-4 shrink-0" />}
+                {isOpen ? (
+                  <Minus className="h-4 w-4 shrink-0" />
+                ) : (
+                  <Plus className="h-4 w-4 shrink-0" />
+                )}
               </button>
 
               {/* Accordion collapse panel */}

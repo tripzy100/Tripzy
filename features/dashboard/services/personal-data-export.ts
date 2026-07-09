@@ -13,7 +13,9 @@ export async function exportPersonalData(userId: string) {
       },
       bookings: {
         include: {
-          vehicle: { select: { brand: { select: { name: true } }, model: { select: { name: true } } } },
+          vehicle: {
+            select: { brand: { select: { name: true } }, model: { select: { name: true } } },
+          },
         },
       },
     },

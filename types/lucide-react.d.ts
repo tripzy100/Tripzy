@@ -1,15 +1,19 @@
 declare module "lucide-react" {
   import { FC, SVGProps, ForwardRefExoticComponent, RefAttributes } from "react";
 
-  type Icon = ForwardRefExoticComponent<SVGProps<SVGSVGElement> & RefAttributes<SVGSVGElement> & { size?: number; absoluteStrokeWidth?: boolean }>;
+  type Icon = ForwardRefExoticComponent<
+    SVGProps<SVGSVGElement> & RefAttributes<SVGSVGElement> & { size?: number; absoluteStrokeWidth?: boolean }
+  >;
   type LucideIcon = Icon;
 
   export type { LucideIcon };
 
+  export const Activity: Icon;
   export const AlertCircle: Icon;
   export const AlertOctagon: Icon;
   export const AlertTriangle: Icon;
   export const ArrowDownLeft: Icon;
+  export const ArrowLeft: Icon;
   export const ArrowUpRight: Icon;
   export const ArrowRight: Icon;
   export const ArrowUpDown: Icon;
@@ -20,6 +24,9 @@ declare module "lucide-react" {
   export const Ban: Icon;
   export const Bell: Icon;
   export const Brain: Icon;
+  export const Briefcase: Icon;
+  export const Building: Icon;
+  export const Building2: Icon;
   export const Calendar: Icon;
   export const CalendarRange: Icon;
   export const Car: Icon;
@@ -32,17 +39,20 @@ declare module "lucide-react" {
   export const Clock: Icon;
   export const Compass: Icon;
   export const Copy: Icon;
+  export const CreditCard: Icon;
+  export const Crown: Icon;
   export const DollarSign: Icon;
   export const Download: Icon;
   export const Edit2: Icon;
+  export const ExternalLink: Icon;
   export const Eye: Icon;
   export const Facebook: Icon;
   export const FileCheck: Icon;
   export const FileText: Icon;
   export const Fuel: Icon;
   export const Gift: Icon;
-  export const Github: Icon;
   export const Globe: Icon;
+  export const Github: Icon;
   export const HardDrive: Icon;
   export const Heart: Icon;
   export const HeartHandshake: Icon;
@@ -50,18 +60,27 @@ declare module "lucide-react" {
   export const History: Icon;
   export const Info: Icon;
   export const Instagram: Icon;
+  export const Key: Icon;
   export const KeyRound: Icon;
   export const Laptop: Icon;
+  export const Loader2: Icon;
+  export const Lock: Icon;
+  export const LockKeyhole: Icon;
+  export const LockKeyholeOpen: Icon;
   export const LayoutDashboard: Icon;
   export const LifeBuoy: Icon;
   export const LogOut: Icon;
   export const Mail: Icon;
   export const MapPin: Icon;
   export const Menu: Icon;
+  export const MessageCircle: Icon;
   export const MessageSquare: Icon;
   export const Minus: Icon;
   export const Moon: Icon;
   export const Navigation: Icon;
+  export const Navigation2: Icon;
+  export const Phone: Icon;
+  export const Plane: Icon;
   export const Plus: Icon;
   export const Printer: Icon;
   export const QrCode: Icon;
@@ -70,6 +89,7 @@ declare module "lucide-react" {
   export const RotateCcw: Icon;
   export const Save: Icon;
   export const Search: Icon;
+  export const Server: Icon;
   export const Send: Icon;
   export const Shield: Icon;
   export const ShieldAlert: Icon;
@@ -77,7 +97,6 @@ declare module "lucide-react" {
   export const SlidersHorizontal: Icon;
   export const Smartphone: Icon;
   export const Sparkles: Icon;
-  export const Activity: Icon;
   export const Star: Icon;
   export const Sun: Icon;
   export const Tag: Icon;
@@ -94,8 +113,4 @@ declare module "lucide-react" {
   export const Wrench: Icon;
   export const X: Icon;
   export const Zap: Icon;
-  export const figma: any;
-  export const createLucideIcon: any;
-  export const createIcon: any;
-  export const icons: Record<string, Icon>;
 }

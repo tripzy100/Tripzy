@@ -11,12 +11,12 @@ const categories = [
   },
   {
     icon: Sparkles,
-    name: "Luxury Elite",
-    description: "Premium sedans and sports models for executive arrivals.",
+    name: "Hatchbacks",
+    description: "Compact city cruisers, easy to park and fuel-efficient.",
   },
   {
     icon: Zap,
-    name: "Electric Fleet (EV)",
+    name: "Electric Cars (EV)",
     description: "Eco-friendly zero-emissions modern battery propulsion.",
   },
   {
@@ -38,12 +38,14 @@ const categories = [
 
 export default function RentalCategories() {
   return (
-    <section className="bg-card/25 border-y border-border py-20 lg:py-28">
+    <section className="border-y border-border bg-card/25 py-12 lg:py-16">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Rental Categories</span>
-          <h2 className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl text-gradient">
-            Flexible packages built for every scenario.
+        <div className="mx-auto mb-16 max-w-3xl text-center">
+          <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Self Drive Car Rental Categories
+          </span>
+          <h2 className="text-gradient mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+            Flexible car rental packages for every need
           </h2>
         </div>
 
@@ -53,17 +55,19 @@ export default function RentalCategories() {
             return (
               <div
                 key={idx}
-                className="group flex flex-col justify-between rounded-xl border border-border bg-card/65 p-6 transition-all duration-300 hover:shadow-md hover:bg-card"
+                className="group flex flex-col justify-between rounded-xl border border-border bg-card/65 p-6 transition-all duration-300 hover:bg-card hover:shadow-md"
               >
                 <div>
                   <div className="mb-4 w-fit rounded-lg bg-primary/10 p-2.5 text-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                     <Icon className="h-5 w-5" />
                   </div>
-                  <h3 className="font-display font-semibold text-base text-foreground mb-2">{cat.name}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{cat.description}</p>
+                  <h3 className="mb-2 font-display text-base font-semibold text-foreground">
+                    {cat.name}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{cat.description}</p>
                 </div>
                 <div className="mt-6 flex justify-end">
-                  <span className="text-xs font-semibold text-foreground/80 group-hover:underline cursor-pointer">
+                  <span className="cursor-pointer text-xs font-semibold text-foreground/80 group-hover:underline">
                     Explore categories &rarr;
                   </span>
                 </div>

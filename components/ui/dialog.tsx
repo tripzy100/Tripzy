@@ -52,7 +52,7 @@ export function Dialog({ isOpen, onClose, title, children, className }: DialogPr
             transition={{ type: "spring", duration: 0.4 }}
             className={cn(
               "relative z-10 w-full max-w-lg overflow-hidden rounded-xl border border-border bg-card p-6 shadow-2xl focus:outline-none",
-              className
+              className,
             )}
             role="dialog"
             aria-modal="true"

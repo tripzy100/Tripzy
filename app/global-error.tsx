@@ -18,7 +18,7 @@ export default function GlobalError({
 
   return (
     <html lang="en">
-      <body className="flex min-h-screen flex-col items-center justify-center bg-background text-foreground font-sans antialiased">
+      <body className="flex min-h-screen flex-col items-center justify-center bg-background font-sans text-foreground antialiased">
         <main className="mx-auto flex max-w-md flex-col items-center justify-center p-6 text-center">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 text-destructive ring-8 ring-destructive/5">
             <AlertCircle className="h-8 w-8" />

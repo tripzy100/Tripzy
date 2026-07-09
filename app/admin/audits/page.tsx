@@ -15,14 +15,17 @@ export default async function AdminAuditsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-display text-2xl font-bold tracking-tight text-gradient">System Audit Trail</h1>
-        <p className="text-sm text-muted-foreground mt-2">
-          Verify chronological compliance logs, track administrative adjustments, and audit authorization role assignments.
+        <h1 className="text-gradient font-display text-2xl font-bold tracking-tight">
+          System Audit Trail
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Verify chronological compliance logs, track administrative adjustments, and audit
+          authorization role assignments.
         </p>
       </div>
 
-      <div className="rounded-xl border border-border bg-card/30 overflow-hidden">
-        <table className="w-full text-left border-collapse text-sm">
+      <div className="overflow-hidden rounded-xl border border-border bg-card/30">
+        <table className="w-full border-collapse text-left text-sm">
           <thead>
             <tr className="border-b border-border bg-muted/40 text-xs font-semibold uppercase text-muted-foreground">
               <th className="p-4">Action</th>
@@ -36,27 +39,29 @@ export default async function AdminAuditsPage() {
             {auditLogs.length > 0 ? (
               auditLogs.map((log) => (
                 <tr key={log.id} className="hover:bg-muted/10">
-                  <td className="p-4 font-semibold text-foreground flex items-center gap-1.5 font-mono text-xs">
+                  <td className="flex items-center gap-1.5 p-4 font-mono text-xs font-semibold text-foreground">
                     <Activity className="h-3.5 w-3.5 text-primary" /> {log.action}
                   </td>
                   <td className="p-4">
                     <span className="font-semibold text-foreground/90">{log.entityName}</span>
-                    <span className="text-[10px] text-muted-foreground block font-mono mt-0.5">{log.entityId || "N/A"}</span>
+                    <span className="mt-0.5 block font-mono text-[10px] text-muted-foreground">
+                      {log.entityId || "N/A"}
+                    </span>
                   </td>
-                  <td className="p-4 text-xs font-mono">{log.user?.email || "System/Cron"}</td>
+                  <td className="p-4 font-mono text-xs">{log.user?.email || "System/Cron"}</td>
                   <td className="p-4 font-mono text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Laptop className="h-3 w-3" /> {log.ipAddress || "Internal"}
                     </span>
                   </td>
-                  <td className="p-4 text-right text-xs text-muted-foreground font-mono">
+                  <td className="p-4 text-right font-mono text-xs text-muted-foreground">
                     {new Date(log.createdAt).toLocaleString()}
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={5} className="text-center p-8 text-xs text-muted-foreground">
+                <td colSpan={5} className="p-8 text-center text-xs text-muted-foreground">
                   No system audit trail entries logged.
                 </td>
               </tr>

@@ -41,7 +41,7 @@ fix(payment): correct webhook signature validation
 refactor(auth): extract middleware logic
 ```
 
-Common scopes: `auth`, `booking`, `payment`, `admin`, `fleet`, `catalog`, `ui`, `api`, `db`, `ci`
+Common scopes: `auth`, `booking`, `payment`, `admin`, `cars`, `catalog`, `ui`, `api`, `db`, `ci`
 
 ## Description
 

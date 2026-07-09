@@ -12,20 +12,22 @@ export default async function AdminImpersonationPage() {
 
   return (
     <div className="space-y-8">
-      <div className="rounded-2xl border border-destructive/20 bg-destructive/5 p-6 flex items-start gap-4">
-        <ShieldAlert className="h-6 w-6 text-destructive shrink-0 mt-0.5" />
+      <div className="flex items-start gap-4 rounded-2xl border border-destructive/20 bg-destructive/5 p-6">
+        <ShieldAlert className="mt-0.5 h-6 w-6 shrink-0 text-destructive" />
         <div className="space-y-1">
-          <h2 className="font-display text-sm font-bold text-destructive uppercase tracking-wider">
+          <h2 className="font-display text-sm font-bold uppercase tracking-wider text-destructive">
             High-Security Administrative Impersonation
           </h2>
-          <p className="text-xs text-muted-foreground max-w-2xl leading-relaxed">
-            By impersonating a customer account, you gain full access to view their dashboard layouts, wallet records, and ticket history. Every transaction, navigation click, and session launch is cryptographically recorded in the immutable audit log.
+          <p className="max-w-2xl text-xs leading-relaxed text-muted-foreground">
+            By impersonating a customer account, you gain full access to view their dashboard
+            layouts, wallet records, and ticket history. Every transaction, navigation click, and
+            session launch is cryptographically recorded in the immutable audit log.
           </p>
         </div>
       </div>
 
       <div>
-        <h3 className="font-display text-lg font-bold text-foreground flex items-center gap-1.5">
+        <h3 className="flex items-center gap-1.5 font-display text-lg font-bold text-foreground">
           <UserCheck className="h-5 w-5 text-primary" /> Active Platform Accounts
         </h3>
       </div>

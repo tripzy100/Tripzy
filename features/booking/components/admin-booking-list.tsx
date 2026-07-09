@@ -42,15 +42,17 @@ export function AdminBookingList({ initialBookings }: { initialBookings: AdminBo
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">Platform Bookings Control</h1>
+        <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
+          Platform Bookings Control
+        </h1>
         <Button onClick={() => window.location.reload()} variant="outline">
           <RefreshCcw className="mr-1.5 h-4 w-4" /> Refresh Lists
         </Button>
       </div>
 
       {/* Bookings table */}
-      <div className="rounded-xl border border-border bg-card/30 overflow-hidden">
-        <table className="w-full text-left border-collapse">
+      <div className="overflow-hidden rounded-xl border border-border bg-card/30">
+        <table className="w-full border-collapse text-left">
           <thead>
             <tr className="border-b border-border bg-muted/40 text-xs font-semibold uppercase text-muted-foreground">
               <th className="p-4">Customer Email</th>
@@ -63,21 +65,30 @@ export function AdminBookingList({ initialBookings }: { initialBookings: AdminBo
           </thead>
           <tbody className="divide-y divide-border text-sm text-foreground/80">
             {bookings.map((b) => (
-              <tr key={b.id} className="hover:bg-muted/10 transition-colors">
+              <tr key={b.id} className="transition-colors hover:bg-muted/10">
                 <td className="p-4 font-medium text-foreground">{b.user.email}</td>
-                <td className="p-4">{b.vehicle.brand.name} {b.vehicle.model.name}</td>
-                <td className="p-4 text-xs font-mono">
-                  {new Date(b.pickupDate).toLocaleDateString()} - {new Date(b.returnDate).toLocaleDateString()}
-                </td>
-                <td className="p-4 font-semibold text-foreground">&#8377;{Number(b.totalAmount)}</td>
                 <td className="p-4">
-                  <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                    b.status === "CONFIRMED" ? "bg-emerald-500/10 text-emerald-500" : "bg-amber-500/10 text-amber-500"
-                  }`}>
+                  {b.vehicle.brand.name} {b.vehicle.model.name}
+                </td>
+                <td className="p-4 font-mono text-xs">
+                  {new Date(b.pickupDate).toLocaleDateString()} -{" "}
+                  {new Date(b.returnDate).toLocaleDateString()}
+                </td>
+                <td className="p-4 font-semibold text-foreground">
+                  &#8377;{Number(b.totalAmount)}
+                </td>
+                <td className="p-4">
+                  <span
+                    className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                      b.status === "CONFIRMED"
+                        ? "bg-emerald-500/10 text-emerald-500"
+                        : "bg-amber-500/10 text-amber-500"
+                    }`}
+                  >
                     {b.status}
                   </span>
                 </td>
-                <td className="p-4 text-right flex justify-end gap-2">
+                <td className="flex justify-end gap-2 p-4 text-right">
                   {b.status === "PENDING" && (
                     <Button onClick={() => handleForceConfirm(b.id)} size="sm">
                       <CheckCircle className="mr-1 h-3.5 w-3.5" /> Force Confirm

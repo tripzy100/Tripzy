@@ -17,16 +17,19 @@ export default async function AdminKycQueuePage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-display text-2xl font-bold tracking-tight text-gradient">KYC Document Review Queue</h1>
-        <p className="text-sm text-muted-foreground mt-2">
-          Verify uploaded credentials, inspect licence numbers, and confirm identity facial verification reviews.
+        <h1 className="text-gradient font-display text-2xl font-bold tracking-tight">
+          KYC Document Review Queue
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Verify uploaded credentials, inspect licence numbers, and confirm identity facial
+          verification reviews.
         </p>
       </div>
 
       {pendingUsers.length > 0 ? (
         <KycReviewList initialUsers={pendingUsers as any} />
       ) : (
-        <div className="rounded-xl border border-dashed border-border p-12 text-center text-xs text-muted-foreground flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-border p-12 text-center text-xs text-muted-foreground">
           <ShieldCheck className="h-8 w-8 text-emerald-500" />
           <span>All customer KYC documents are fully audited and cleared!</span>
         </div>

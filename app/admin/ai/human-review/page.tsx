@@ -11,7 +11,12 @@ export default function HumanReviewQueuePage() {
     {
       id: "ocr-1",
       user: "suresh@example.com",
-      ocrDetails: { name: "Suresh Kumar", dob: "1991-03-14", licenseNumber: "DL-11-20199842", expiry: "2032-04-12" },
+      ocrDetails: {
+        name: "Suresh Kumar",
+        dob: "1991-03-14",
+        licenseNumber: "DL-11-20199842",
+        expiry: "2032-04-12",
+      },
       confidence: 0.88,
     },
   ]);
@@ -24,8 +29,8 @@ export default function HumanReviewQueuePage() {
               ...item,
               ocrDetails: { ...item.ocrDetails, [field]: value },
             }
-          : item
-      )
+          : item,
+      ),
     );
   };
 
@@ -37,32 +42,35 @@ export default function HumanReviewQueuePage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-display text-2xl font-bold tracking-tight text-gradient flex items-center gap-2">
+        <h1 className="text-gradient flex items-center gap-2 font-display text-2xl font-bold tracking-tight">
           <ShieldAlert className="h-6 w-6 text-destructive" /> Human Review Queue
         </h1>
-        <p className="text-sm text-muted-foreground mt-2">
-          Manually review and override high-risk document OCR details that fell below confidence thresholds.
+        <p className="mt-2 text-sm text-muted-foreground">
+          Manually review and override high-risk document OCR details that fell below confidence
+          thresholds.
         </p>
       </div>
 
       <div className="grid gap-6">
         {queue.map((item) => (
-          <div key={item.id} className="rounded-xl border border-border bg-card/30 p-6 space-y-6">
-            <div className="flex justify-between items-start">
+          <div key={item.id} className="space-y-6 rounded-xl border border-border bg-card/30 p-6">
+            <div className="flex items-start justify-between">
               <div>
                 <span className="text-xs text-muted-foreground">User Address Coordinates</span>
-                <h4 className="font-display font-semibold text-foreground text-sm flex items-center gap-1">
+                <h4 className="flex items-center gap-1 font-display text-sm font-semibold text-foreground">
                   <User className="h-4.5 w-4.5 text-primary" /> {item.user}
                 </h4>
               </div>
-              <span className="text-xs font-bold text-destructive font-mono bg-destructive/10 px-2 py-0.5 rounded-full">
+              <span className="rounded-full bg-destructive/10 px-2 py-0.5 font-mono text-xs font-bold text-destructive">
                 Confidence: {Math.round(item.confidence * 100)}%
               </span>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] text-muted-foreground uppercase font-bold">Name</label>
+                <label className="text-[10px] font-bold uppercase text-muted-foreground">
+                  Name
+                </label>
                 <input
                   value={item.ocrDetails.name}
                   onChange={(e) => handleUpdateField(item.id, "name", e.target.value)}
@@ -70,7 +78,9 @@ export default function HumanReviewQueuePage() {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] text-muted-foreground uppercase font-bold">Licence Number</label>
+                <label className="text-[10px] font-bold uppercase text-muted-foreground">
+                  Licence Number
+                </label>
                 <input
                   value={item.ocrDetails.licenseNumber}
                   onChange={(e) => handleUpdateField(item.id, "licenseNumber", e.target.value)}
@@ -78,7 +88,7 @@ export default function HumanReviewQueuePage() {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] text-muted-foreground uppercase font-bold">DOB</label>
+                <label className="text-[10px] font-bold uppercase text-muted-foreground">DOB</label>
                 <input
                   value={item.ocrDetails.dob}
                   onChange={(e) => handleUpdateField(item.id, "dob", e.target.value)}
@@ -86,7 +96,9 @@ export default function HumanReviewQueuePage() {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] text-muted-foreground uppercase font-bold">Expiry Date</label>
+                <label className="text-[10px] font-bold uppercase text-muted-foreground">
+                  Expiry Date
+                </label>
                 <input
                   value={item.ocrDetails.expiry}
                   onChange={(e) => handleUpdateField(item.id, "expiry", e.target.value)}
@@ -95,7 +107,7 @@ export default function HumanReviewQueuePage() {
               </div>
             </div>
 
-            <div className="flex gap-2 justify-end pt-4 border-t border-border/60">
+            <div className="flex justify-end gap-2 border-t border-border/60 pt-4">
               <Button onClick={() => handleResolveOCR(item.id, false)} variant="outline" size="sm">
                 <X className="mr-1 h-3.5 w-3.5" /> Reject Doc
               </Button>
@@ -107,7 +119,7 @@ export default function HumanReviewQueuePage() {
         ))}
 
         {queue.length === 0 && (
-          <div className="rounded-xl border border-dashed border-border p-12 text-center text-muted-foreground text-xs">
+          <div className="rounded-xl border border-dashed border-border p-12 text-center text-xs text-muted-foreground">
             No high-risk documents pending human validation. All clear!
           </div>
         )}

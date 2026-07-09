@@ -5,10 +5,10 @@ import { Badge } from "@/components/ui/badge";
 
 const articles = [
   {
-    title: "10 Scenic road trips from Bengaluru for a long weekend",
+    title: "10 Scenic road trips from Ranchi for a long weekend",
     category: "Travel Guides",
     readTime: "5 min read",
-    slug: "scenic-road-trips-bengaluru",
+    slug: "scenic-road-trips-ranchi",
   },
   {
     title: "Understanding EV range limits: Tips for roadtripping in electric vehicles",
@@ -26,12 +26,14 @@ const articles = [
 
 export default function BlogPreview() {
   return (
-    <section className="bg-card/20 border-t border-border py-20 lg:py-28">
+    <section className="border-t border-border bg-card/20 py-12 lg:py-16">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-16">
+        <div className="mb-16 flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">The Road Log</span>
-            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl text-gradient">
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              The Road Log
+            </span>
+            <h2 className="text-gradient mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl">
               Latest from the travel blog.
             </h2>
           </div>
@@ -44,20 +46,23 @@ export default function BlogPreview() {
           {articles.map((item, idx) => (
             <div
               key={idx}
-              className="flex flex-col justify-between rounded-xl border border-border bg-card/60 p-6 shadow-sm transition-all duration-300 hover:shadow-md hover:bg-card"
+              className="flex flex-col justify-between rounded-xl border border-border bg-card/60 p-6 shadow-sm transition-all duration-300 hover:bg-card hover:shadow-md"
             >
               <div>
-                <div className="flex items-center gap-2 mb-4">
+                <div className="mb-4 flex items-center gap-2">
                   <Badge variant="secondary">{item.category}</Badge>
                   <span className="text-xs text-muted-foreground">{item.readTime}</span>
                 </div>
-                <h3 className="font-display font-semibold text-base leading-snug text-foreground hover:text-muted-foreground">
+                <h3 className="font-display text-base font-semibold leading-snug text-foreground hover:text-muted-foreground">
                   <Link href={`/blog/${item.slug}`}>{item.title}</Link>
                 </h3>
               </div>
-              
-              <div className="mt-6 pt-4 border-t border-border/50">
-                <Link href={`/blog/${item.slug}`} className="text-xs font-bold uppercase tracking-wider text-foreground hover:underline">
+
+              <div className="mt-6 border-t border-border/50 pt-4">
+                <Link
+                  href={`/blog/${item.slug}`}
+                  className="text-xs font-bold uppercase tracking-wider text-foreground hover:underline"
+                >
                   Read Article &rarr;
                 </Link>
               </div>

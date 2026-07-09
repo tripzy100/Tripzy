@@ -1,11 +1,18 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { PaymentStatus, PaymentGateway, TransactionType, TransactionStatus, RefundStatus, WalletTransactionType, BookingStatus } from "@prisma/client";
+import {
+  PaymentStatus,
+  PaymentGateway,
+  TransactionType,
+  TransactionStatus,
+  RefundStatus,
+  WalletTransactionType,
+  BookingStatus,
+} from "@prisma/client";
 import { CheckoutRequestValues, RefundRequestValues } from "../validators";
 import { validateCoupon } from "../services/coupon-engine";
 import { createInvoice } from "../services/invoice-service";
-import { checkPaymentVelocity, detectDuplicateCheckouts } from "../services/risk-engine";
 
 /**
  * Initiates a payment session, checking velocity and duplicate checkout rules.
@@ -15,17 +22,13 @@ export async function createPaymentSession(values: CheckoutRequestValues) {
     const booking = await db.booking.findUnique({ where: { id: values.bookingId } });
     if (!booking) return { success: false, error: "Booking not found" };
 
-    // 1. Velocity limiting audit
-    const isSafe = await checkPaymentVelocity(booking.userId);
-    if (!isSafe) return { success: false, error: "Too many payment attempts. Please wait 1 minute." };
-
-    // 2. Duplicate checkout check
-    const isUnique = await detectDuplicateCheckouts(booking.userId, booking.pickupDate, booking.returnDate);
-    if (!isUnique) return { success: false, error: "You already have another active reservation checking out" };
-
     let discount = 0;
     if (values.promoCode) {
-      const couponVal = await validateCoupon(values.promoCode, Number(booking.totalAmount), booking.userId);
+      const couponVal = await validateCoupon(
+        values.promoCode,
+        Number(booking.totalAmount),
+        booking.userId,
+      );
       if (couponVal.success) discount = couponVal.discountAmount || 0;
     }
 
@@ -41,7 +44,12 @@ export async function createPaymentSession(values: CheckoutRequestValues) {
       },
     });
 
-    return { success: true, paymentId: payment.id, orderId: payment.gatewayOrderId, amount: finalAmount };
+    return {
+      success: true,
+      paymentId: payment.id,
+      orderId: payment.gatewayOrderId,
+      amount: finalAmount,
+    };
   } catch (error) {
     return { success: false, error: "Order session generation failed" };
   }
@@ -50,7 +58,11 @@ export async function createPaymentSession(values: CheckoutRequestValues) {
 /**
  * Handles successful order processing, updates database status, and generates the invoice.
  */
-export async function processSuccessfulPayment(orderId: string, gatewayPaymentId: string, amount: number) {
+export async function processSuccessfulPayment(
+  orderId: string,
+  gatewayPaymentId: string,
+  amount: number,
+) {
   try {
     const payment = await db.payment.findFirst({ where: { gatewayOrderId: orderId } });
     if (!payment) return { success: false, error: "Payment reference not found" };

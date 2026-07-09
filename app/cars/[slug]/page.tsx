@@ -60,11 +60,20 @@ export default async function CarDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  const [pickupLocations, dropLocations] = await Promise.all([
+    db.pickupLocation.findMany({ where: { isActive: true } }),
+    db.dropLocation.findMany({ where: { isActive: true } }),
+  ]);
+
   return (
     <>
       <Header />
       <main className="mx-auto max-w-7xl px-6 py-12">
-        <VehicleDetailView vehicle={vehicle as any} />
+        <VehicleDetailView
+          vehicle={vehicle as any}
+          pickupLocations={pickupLocations}
+          dropLocations={dropLocations}
+        />
       </main>
       <Footer />
     </>

@@ -28,7 +28,7 @@ export function AdminPaymentsList({ initialPayments }: { initialPayments: Paymen
     if (res.success) {
       showToast("Refund completed successfully", "success");
       setPayments((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, paymentStatus: "REFUNDED" } : p))
+        prev.map((p) => (p.id === id ? { ...p, paymentStatus: "REFUNDED" } : p)),
       );
     } else {
       showToast(res.error || "Refund failure", "error");
@@ -37,11 +37,13 @@ export function AdminPaymentsList({ initialPayments }: { initialPayments: Paymen
 
   return (
     <div className="space-y-6">
-      <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">Payments & Financial Auditing</h1>
+      <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
+        Payments & Financial Auditing
+      </h1>
 
       {/* Audit table */}
-      <div className="rounded-xl border border-border bg-card/30 overflow-hidden">
-        <table className="w-full text-left border-collapse">
+      <div className="overflow-hidden rounded-xl border border-border bg-card/30">
+        <table className="w-full border-collapse text-left">
           <thead>
             <tr className="border-b border-border bg-muted/40 text-xs font-semibold uppercase text-muted-foreground">
               <th className="p-4">Gateway Order ID</th>
@@ -53,25 +55,37 @@ export function AdminPaymentsList({ initialPayments }: { initialPayments: Paymen
           </thead>
           <tbody className="divide-y divide-border text-sm text-foreground/80">
             {payments.map((p) => (
-              <tr key={p.id} className="hover:bg-muted/10 transition-colors">
-                <td className="p-4 font-mono text-xs text-foreground font-semibold">{p.gatewayOrderId || "N/A"}</td>
+              <tr key={p.id} className="transition-colors hover:bg-muted/10">
+                <td className="p-4 font-mono text-xs font-semibold text-foreground">
+                  {p.gatewayOrderId || "N/A"}
+                </td>
                 <td className="p-4">{p.booking.bookingNumber}</td>
-                <td className="p-4 font-semibold text-foreground">&#8377;{Number(p.totalAmount)}</td>
+                <td className="p-4 font-semibold text-foreground">
+                  &#8377;{Number(p.totalAmount)}
+                </td>
                 <td className="p-4">
-                  <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                    p.paymentStatus === "COMPLETED" ? "bg-emerald-500/10 text-emerald-500" : "bg-amber-500/10 text-amber-500"
-                  }`}>
+                  <span
+                    className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                      p.paymentStatus === "COMPLETED"
+                        ? "bg-emerald-500/10 text-emerald-500"
+                        : "bg-amber-500/10 text-amber-500"
+                    }`}
+                  >
                     {p.paymentStatus}
                   </span>
                 </td>
-                <td className="p-4 text-right flex justify-end gap-2">
+                <td className="flex justify-end gap-2 p-4 text-right">
                   {p.paymentStatus === "COMPLETED" && (
-                    <Button onClick={() => handleRefund(p.id, Number(p.totalAmount))} size="sm" variant="outline">
+                    <Button
+                      onClick={() => handleRefund(p.id, Number(p.totalAmount))}
+                      size="sm"
+                      variant="outline"
+                    >
                       <RotateCcw className="mr-1 h-3.5 w-3.5" /> Refund
                     </Button>
                   )}
                   {p.paymentStatus === "REFUNDED" && (
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
+                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
                       <ShieldCheck className="h-4.5 w-4.5 text-emerald-500" /> Refunded Completed
                     </span>
                   )}

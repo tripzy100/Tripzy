@@ -67,7 +67,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           {children}
 
           {/* Toast Container Overlay */}
-          <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 w-full max-w-sm">
+          <div className="fixed bottom-4 right-4 z-50 flex w-full max-w-sm flex-col gap-2">
             <AnimatePresence>
               {toasts.map((toast) => (
                 <motion.div
@@ -79,13 +79,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
                   className="glassmorphism flex items-start gap-3 rounded-lg p-4 shadow-lg"
                 >
                   <div className="mt-0.5">
-                    {toast.type === "success" && <CheckCircle2 className="h-5 w-5 text-emerald-500" />}
+                    {toast.type === "success" && (
+                      <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                    )}
                     {toast.type === "error" && <AlertCircle className="h-5 w-5 text-destructive" />}
                     {toast.type === "info" && <Info className="h-5 w-5 text-blue-500" />}
                   </div>
-                  <div className="flex-1 text-sm font-medium text-foreground">
-                    {toast.message}
-                  </div>
+                  <div className="flex-1 text-sm font-medium text-foreground">{toast.message}</div>
                   <button
                     onClick={() => removeToast(toast.id)}
                     className="rounded p-0.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"

@@ -1,93 +1,103 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { redis } from "@/lib/redis";
+import { createMiddlewareClient } from "@/lib/supabase";
+import { checkRateLimit } from "@/lib/rate-limit";
 
-// Define route access definitions
-const PUBLIC_ROUTES = ["/", "/auth/login", "/auth/register", "/maintenance"];
+const PUBLIC_ROUTES = [
+  "/", "/cars", "/bookings", "/cities", "/packages", "/support",
+  "/vehicles", "/privacy", "/terms", "/cancellation", "/security",
+  "/airports", "/auth/login", "/auth/register", "/maintenance", "/error",
+];
 const ADMIN_ROUTES = ["/admin"];
 
-/**
- * Basic token bucket rate limiting using Upstash Redis.
- */
-async function rateLimiter(ip: string, limit = 60, windowSeconds = 60): Promise<{ allowed: boolean; remaining: number }> {
-  const key = `ratelimit:${ip}`;
-  try {
-    const current = await redis.incr(key);
-    if (current === 1) {
-      await redis.expire(key, windowSeconds);
-    }
-    return {
-      allowed: current <= limit,
-      remaining: Math.max(0, limit - current),
-    };
-  } catch (error) {
-    console.error("Rate limiter failure (bypassing):", error);
-    // Fail-open in dev to prevent blocking traffic if Redis is down
-    return { allowed: true, remaining: 999 };
+function getClientIp(request: NextRequest): string {
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) {
+    const ips = forwarded.split(",").map((ip) => ip.trim());
+    return ips[ips.length - 1] || "127.0.0.1";
   }
+  return request.headers.get("x-real-ip") || "127.0.0.1";
 }
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "127.0.0.1";
+  const ip = getClientIp(request);
 
-  // 1. Rate Limiting Check
+  // 1. Rate limiting
   const isApi = pathname.startsWith("/api");
   if (isApi) {
-    const { allowed, remaining } = await rateLimiter(ip, 60, 60);
+    const isAuthApi = pathname.startsWith("/api/auth");
+    const limit = isAuthApi ? 10 : 60;
+    const { allowed, remaining } = checkRateLimit(ip, limit, 60000);
     if (!allowed) {
       return new NextResponse(JSON.stringify({ error: "Too many requests" }), {
         status: 429,
         headers: {
           "Content-Type": "application/json",
-          "X-RateLimit-Limit": "60",
+          "Retry-After": "60",
+          "X-RateLimit-Limit": String(limit),
           "X-RateLimit-Remaining": String(remaining),
         },
       });
     }
   }
 
-  // 2. Authentication & RBAC (Role-Based Access Control)
-  // Retrieve token cookie (Better Auth standard cookie)
-  const token = request.cookies.get("better-auth.session-token")?.value;
+  // 2. Authentication & RBAC
+  const isStaticAsset = pathname.startsWith("/_next") || pathname.startsWith("/favicon");
+  const isPublic = PUBLIC_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(route + "/"),
+  );
 
-  // Skeletons for path validation
-  const isPublic = PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
-  const isAdmin = ADMIN_ROUTES.some((route) => pathname.startsWith(route));
+  if (isStaticAsset) {
+    return NextResponse.next();
+  }
 
-  if (!token && !isPublic) {
-    // Redirect unauthenticated traffic to login
+  // Create Supabase client that reads cookies from the request
+  const response = NextResponse.next();
+  const supabase = createMiddlewareClient(request, response);
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // Extract role from user metadata (set during registration)
+  const role = user?.user_metadata?.role || "USER";
+
+  if (!user && !isPublic && !pathname.startsWith("/api/auth")) {
     const loginUrl = new URL("/auth/login", request.url);
+    loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  if (token && isAdmin) {
-    // In actual implementation, we would decode or query user role from cache/token
-    // and verify role === "ADMIN". Redirect to forbidden page if not admin.
-    const userRole = request.cookies.get("user-role")?.value;
-    if (userRole !== "ADMIN") {
+  if (user && ADMIN_ROUTES.some((route) => pathname.startsWith(route))) {
+    if (role !== "ADMIN") {
       const forbiddenUrl = new URL("/error", request.url);
       forbiddenUrl.searchParams.set("code", "FORBIDDEN");
       return NextResponse.redirect(forbiddenUrl);
     }
   }
 
-  // 3. CSP and security response headers
-  const response = NextResponse.next();
-  response.headers.set("Content-Security-Policy", "default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https:;");
+  // 3. Security response headers
+  const isDev = process.env.NODE_ENV === "development";
+  const cspDirectives = [
+    "default-src 'self'",
+    "img-src 'self' data: https://res.cloudinary.com https://maps.googleapis.com https://images.unsplash.com",
+    isDev ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'" : "script-src 'self' 'unsafe-inline'",
+    "style-src 'self' 'unsafe-inline'",
+    "font-src 'self' data: https://fonts.gstatic.com",
+    "connect-src 'self' https://res.cloudinary.com https://*.supabase.co",
+    "frame-src 'self' https://www.google.com https://maps.google.com https://*.google.com https://*.google.co.in",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "upgrade-insecure-requests",
+  ].join("; ");
+
+  response.headers.set("Content-Security-Policy", cspDirectives);
 
   return response;
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to add public asset routes here if required
-     */
-    "/((?!_next/static|_next/image|favicon.ico|public).*)",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|public).*)"],
 };

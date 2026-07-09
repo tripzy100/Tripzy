@@ -13,7 +13,7 @@ export interface TaxSplit {
 export function calculateTaxSplit(
   amount: number,
   pickupState: string,
-  customerState: string
+  customerState: string,
 ): TaxSplit {
   const taxRate = 0.18;
   const totalTax = Math.round(amount * taxRate);
@@ -39,11 +39,7 @@ export function calculateTaxSplit(
 /**
  * Generates Credit Note metadata parameters for processed refunds.
  */
-export function generateCreditNote(
-  invoiceNumber: string,
-  refundAmount: number,
-  reason: string
-) {
+export function generateCreditNote(invoiceNumber: string, refundAmount: number, reason: string) {
   return {
     creditNoteNumber: `CN-${Date.now().toString().slice(-6)}-${invoiceNumber}`,
     originalInvoice: invoiceNumber,

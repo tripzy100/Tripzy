@@ -4,11 +4,7 @@ import { CouponType } from "@prisma/client";
 /**
  * Validates a discount coupon code against user and booking parameters.
  */
-export async function validateCoupon(
-  code: string,
-  bookingValue: number,
-  userId: string
-) {
+export async function validateCoupon(code: string, bookingValue: number, userId: string) {
   const coupon = await db.coupon.findUnique({
     where: { code: code.toUpperCase() },
     include: { usages: { where: { userId } } },
@@ -40,7 +36,7 @@ function calculateDiscount(coupon: any, bookingValue: number): number {
   if (coupon.type === CouponType.FLAT) {
     return Math.min(Number(coupon.value), bookingValue);
   }
-  
+
   // PERCENTAGE type discount
   const computed = bookingValue * (Number(coupon.value) / 100);
   if (coupon.maxDiscountAmount) {
