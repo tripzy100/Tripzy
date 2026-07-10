@@ -104,13 +104,16 @@ export default async function CarsPage({ searchParams }: PageProps) {
           {/* Cars Grid */}
           <div className="grid flex-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {vehicles.map((car) => {
-              const rate = car.pricings[0]?.dailyRate?.toNumber() || 2000;
+              const brandName = car.brand?.name || "Car";
+              const modelName = car.model?.name || "";
+              const pricing = car.pricings?.[0];
+              const rate = pricing ? (typeof pricing.dailyRate.toNumber === "function" ? pricing.dailyRate.toNumber() : Number(pricing.dailyRate)) : 2000;
               const slug = getVehicleSlug(
-                car.brand.name,
-                car.model.name,
+                brandName,
+                modelName,
                 2024,
-                car.transmission,
-                car.fuelType,
+                car.transmission || "MANUAL",
+                car.fuelType || "PETROL",
               );
 
               return (
@@ -120,15 +123,15 @@ export default async function CarsPage({ searchParams }: PageProps) {
                 >
                   <div className="relative flex h-44 w-full items-center justify-center overflow-hidden bg-muted">
                     <img
-                      src={`/cars/${(car.brand.name + "-" + car.model.name).toLowerCase().replace(/\s+/g, "-")}.png`}
-                      alt={`${car.brand.name} ${car.model.name}`}
+                      src={`/cars/${(brandName + "-" + modelName).toLowerCase().replace(/\s+/g, "-")}.png`}
+                      alt={`${brandName} ${modelName}`}
                       className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                   </div>
                   <div className="space-y-4 p-5">
                     <div className="flex items-center justify-between">
                       <h3 className="font-display text-base font-semibold text-foreground">
-                        {car.brand.name} {car.model.name}
+                        {brandName} {modelName}
                       </h3>
                       <div className="flex items-center gap-1 text-xs font-semibold text-amber-500">
                         <Star className="h-3.5 w-3.5 fill-current" /> 4.9
