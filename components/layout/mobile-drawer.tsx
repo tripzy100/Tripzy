@@ -63,7 +63,7 @@ export function MobileDrawer({ isOpen, onClose, theme, toggleTheme }: MobileDraw
                 <ul className="space-y-6">
                   <li>
                     <Link
-                      href="/cars"
+                      href="/#cars"
                       onClick={onClose}
                       className="block font-display text-lg font-medium text-foreground hover:text-muted-foreground"
                     >

@@ -59,7 +59,7 @@ export default function FeaturedVehicles() {
   };
 
   return (
-    <section className="border-y border-border bg-card/20 py-12 lg:py-16">
+    <section id="cars" className="border-y border-border bg-card/20 py-12 lg:py-16">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-12 flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
