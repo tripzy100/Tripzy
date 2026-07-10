@@ -39,7 +39,7 @@ export function Header() {
       <header
         className={`sticky top-0 z-40 w-full transition-all duration-300 ${
           isScrolled
-            ? "border-b border-border bg-background/80 shadow-sm backdrop-blur-md"
+            ? "border-b border-border/60 bg-background/70 shadow-sm backdrop-blur-md"
             : "bg-transparent"
         }`}
       >
@@ -127,15 +127,16 @@ export function Header() {
 
           {/* Mobile Navigation Trigger */}
           <div className="flex items-center gap-3 lg:hidden">
+
             <a
               href="https://wa.me/919234273063"
               target="_blank"
               rel="noopener noreferrer"
-              className="group rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-[#25D366]"
+              className="group rounded-lg p-1.5 text-[#25D366] transition-colors hover:bg-muted"
               aria-label="Chat on WhatsApp"
             >
               <svg
-                className="h-5 w-5 fill-muted-foreground transition-colors group-hover:fill-[#25D366]"
+                className="h-5 w-5 fill-[#25D366]"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
               >

@@ -74,9 +74,17 @@ function LoginContent() {
               />
             </div>
             <div className="space-y-2">
-              <label className="flex items-center gap-1.5 text-xs font-medium text-foreground">
-                <Shield className="h-3.5 w-3.5" /> Password
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="flex items-center gap-1.5 text-xs font-medium text-foreground">
+                  <Shield className="h-3.5 w-3.5" /> Password
+                </label>
+                <Link
+                  href="/auth/forgot-password"
+                  className="text-xs font-medium text-foreground/80 hover:text-foreground hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
               <input
                 type="password"
                 value={password}

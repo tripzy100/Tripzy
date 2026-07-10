@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${sansFont.variable} ${displayFont.variable} bg-background text-foreground antialiased`}
+        className={`${sansFont.variable} ${displayFont.variable} bg-background text-foreground antialiased app-bg`}
       >
         <AppProvider>{children}</AppProvider>
       </body>

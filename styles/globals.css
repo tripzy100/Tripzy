@@ -73,6 +73,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background font-sans text-foreground antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
@@ -87,6 +88,22 @@
 
 /* Premium utilities and micro-animations */
 @layer utilities {
+
+  /* Page background (minimal, premium, works for both light/dark) */
+  .app-bg {
+    background-image:
+      radial-gradient(1000px 650px at 20% -10%, rgba(129, 140, 248, 0.25), rgba(129, 140, 248, 0) 55%),
+      radial-gradient(900px 600px at 90% 10%, rgba(37, 211, 102, 0.2), rgba(37, 211, 102, 0) 52%),
+      linear-gradient(to bottom, rgba(15, 23, 42, 0), rgba(15, 23, 42, 0.35));
+  }
+
+  .light .app-bg {
+    background-image:
+      radial-gradient(900px 600px at 15% 0%, rgba(79, 70, 229, 0.12), rgba(79, 70, 229, 0) 55%),
+      radial-gradient(900px 600px at 95% 10%, rgba(37, 211, 102, 0.1), rgba(37, 211, 102, 0) 50%),
+      linear-gradient(to bottom, rgba(15, 23, 42, 0), rgba(15, 23, 42, 0.05));
+  }
+
   .glassmorphism {
     background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(12px);
@@ -114,25 +131,21 @@
   }
 
   .shimmer {
-    background: linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.05) 20%,
-      rgba(255, 255, 255, 0.1) 60%,
-      rgba(255, 255, 255, 0) 100%
-    );
+    background: linear-gradient(90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.05) 20%,
+        rgba(255, 255, 255, 0.1) 60%,
+        rgba(255, 255, 255, 0) 100%);
     background-size: 200% 100%;
     animation: shimmer-anim 1.5s infinite;
   }
 
   .light .shimmer {
-    background: linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0) 0%,
-      rgba(0, 0, 0, 0.02) 20%,
-      rgba(0, 0, 0, 0.05) 60%,
-      rgba(0, 0, 0, 0) 100%
-    );
+    background: linear-gradient(90deg,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0.02) 20%,
+        rgba(0, 0, 0, 0.05) 60%,
+        rgba(0, 0, 0, 0) 100%);
     background-size: 200% 100%;
     animation: shimmer-anim 1.5s infinite;
   }
@@ -142,6 +155,7 @@
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }

@@ -6,7 +6,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 const PUBLIC_ROUTES = [
   "/", "/cars", "/bookings", "/cities", "/packages", "/support",
   "/vehicles", "/privacy", "/terms", "/cancellation", "/security",
-  "/airports", "/auth/login", "/auth/register", "/maintenance", "/error",
+  "/airports", "/auth/login", "/auth/register", "/auth/forgot-password", "/auth/reset-password", "/auth/callback", "/maintenance", "/error",
 ];
 const ADMIN_ROUTES = ["/admin"];
 

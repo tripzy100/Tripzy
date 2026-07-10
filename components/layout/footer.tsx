@@ -4,7 +4,8 @@ import { siteConfig } from "@/config/site";
 
 export function Footer() {
   return (
-    <footer className="border-t border-border bg-card/30">
+    <footer className="relative border-t border-border/60 bg-card/20">
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-transparent via-background/10 to-transparent" />
       <div className="mx-auto max-w-7xl px-6 py-12 lg:py-16">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-5">
           {/* Brand Info Column */}

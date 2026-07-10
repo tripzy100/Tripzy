@@ -29,8 +29,9 @@ export default function HeroSection() {
           }}
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
           style={{
+            /* Local first (if present), then premium Unsplash fallback */
             backgroundImage:
-              "url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=2070&auto=format&fit=crop')",
+              "url('/hero-bg-2.svg'), url('/hero-bg-1.svg'), url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=2070&auto=format&fit=crop')",
           }}
         />
       </motion.div>
@@ -84,6 +85,12 @@ export default function HeroSection() {
           <Link href="/cars">
             <Button size="lg" className="group">
               Browse Cars
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </Link>
+          <Link href="/auth/login">
+            <Button size="lg" className="group">
+              Book Now
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
           </Link>
