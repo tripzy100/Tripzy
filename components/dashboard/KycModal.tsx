@@ -19,8 +19,8 @@ export function KycModal({ isOpen, onClose, onSuccess, initialDl = "", initialAa
   const [step, setStep] = React.useState<1 | 2 | 3>(1);
   const [loading, setLoading] = React.useState(false);
 
-  const [dlNumber, setDlNumber] = React.useState(initialDl || "DL-0420110098765");
-  const [aadharNumber, setAadharNumber] = React.useState(initialAadhar || "5432 8765 1092");
+  const [dlNumber, setDlNumber] = React.useState(initialDl || "");
+  const [aadharNumber, setAadharNumber] = React.useState(initialAadhar || "");
   const selfieCaptured = true;
 
   React.useEffect(() => {
@@ -120,7 +120,6 @@ export function KycModal({ isOpen, onClose, onSuccess, initialDl = "", initialAa
                     required
                     value={dlNumber}
                     onChange={(e) => setDlNumber(e.target.value)}
-                    placeholder="e.g. DL-0420110098765"
                     className="w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
@@ -158,7 +157,6 @@ export function KycModal({ isOpen, onClose, onSuccess, initialDl = "", initialAa
                     required
                     value={aadharNumber}
                     onChange={(e) => setAadharNumber(e.target.value)}
-                    placeholder="e.g. 5432 8765 1092"
                     className="w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>

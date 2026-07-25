@@ -351,7 +351,6 @@ export default function CheckoutWizard({
               </label>
               <input
                 type="text"
-                placeholder="XXXX XXXX XXXX"
                 value={aadhar}
                 maxLength={14} // to allow spaces
                 onChange={(e) => {
@@ -370,7 +369,6 @@ export default function CheckoutWizard({
               </label>
               <input
                 type="text"
-                placeholder="e.g. DL-1420110012345"
                 value={dlNumber}
                 onChange={(e) => setDlNumber(e.target.value)}
                 className="w-full rounded-lg border border-border bg-background px-4 py-2 text-sm text-foreground uppercase focus:outline-none focus:ring-1 focus:ring-primary"

@@ -155,7 +155,6 @@ export function ProfileModal({ isOpen, onClose, onSuccess, initialData }: Profil
                 type="tel"
                 name="phone"
                 required
-                placeholder="+91 98765 43210"
                 value={formData.phone}
                 onChange={handleChange}
                 className="w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
@@ -205,7 +204,6 @@ export function ProfileModal({ isOpen, onClose, onSuccess, initialData }: Profil
                 type="text"
                 name="street"
                 required
-                placeholder="Building, Street, Landmark"
                 value={formData.street}
                 onChange={handleChange}
                 className="w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
@@ -219,7 +217,6 @@ export function ProfileModal({ isOpen, onClose, onSuccess, initialData }: Profil
                 type="text"
                 name="zipCode"
                 required
-                placeholder="110001"
                 value={formData.zipCode}
                 onChange={handleChange}
                 className="w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
@@ -241,7 +238,6 @@ export function ProfileModal({ isOpen, onClose, onSuccess, initialData }: Profil
                   type="text"
                   name="emergencyContactName"
                   required
-                  placeholder="Relative Name"
                   value={formData.emergencyContactName}
                   onChange={handleChange}
                   className="w-full rounded-lg border border-input bg-card px-3 py-1.5 text-xs text-foreground focus:outline-none"
@@ -255,7 +251,6 @@ export function ProfileModal({ isOpen, onClose, onSuccess, initialData }: Profil
                   type="tel"
                   name="emergencyContactPhone"
                   required
-                  placeholder="+91 91234 56789"
                   value={formData.emergencyContactPhone}
                   onChange={handleChange}
                   className="w-full rounded-lg border border-input bg-card px-3 py-1.5 text-xs text-foreground focus:outline-none"
@@ -268,7 +263,6 @@ export function ProfileModal({ isOpen, onClose, onSuccess, initialData }: Profil
                 <input
                   type="text"
                   name="emergencyContactRelationship"
-                  placeholder="Parent / Spouse"
                   value={formData.emergencyContactRelationship}
                   onChange={handleChange}
                   className="w-full rounded-lg border border-input bg-card px-3 py-1.5 text-xs text-foreground focus:outline-none"
