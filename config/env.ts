@@ -19,6 +19,7 @@ const envSchema = z.object({
   MSG91_ROUTE: z.string().min(1, "MSG91_ROUTE is required"),
   NEXT_PUBLIC_APP_URL: z.string().url("NEXT_PUBLIC_APP_URL must be a valid URL"),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
+  TWO_FACTOR_API_KEY: z.string().optional(),
 });
 
 let env: z.infer<typeof envSchema>;
@@ -42,6 +43,7 @@ try {
     MSG91_ROUTE: process.env.MSG91_ROUTE,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NODE_ENV: process.env.NODE_ENV,
+    TWO_FACTOR_API_KEY: process.env.TWO_FACTOR_API_KEY,
   });
 } catch (error) {
   if (error instanceof z.ZodError) {
@@ -72,6 +74,7 @@ try {
       MSG91_ROUTE: process.env.MSG91_ROUTE || "4",
       NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
       NODE_ENV: "development",
+      TWO_FACTOR_API_KEY: process.env.TWO_FACTOR_API_KEY || "mock_2factor_key",
     };
   }
 }

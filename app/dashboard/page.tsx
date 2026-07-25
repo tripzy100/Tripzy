@@ -1,137 +1,177 @@
+"use client";
+
+import * as React from "react";
 import Link from "next/link";
-import { db } from "@/lib/db";
-import { Wallet, ShieldCheck, Bell, ArrowUpRight, Clock } from "lucide-react";
+import { OnboardingTracker } from "@/components/dashboard/OnboardingTracker";
+import { CompleteProfileCard } from "@/components/dashboard/CompleteProfileCard";
+import { CompleteKycCard } from "@/components/dashboard/CompleteKycCard";
+import { SelectBookCarCard } from "@/components/dashboard/SelectBookCarCard";
+import { MyBookingsCard } from "@/components/dashboard/MyBookingsCard";
+import { Wallet, ShieldCheck, Bell, RefreshCw, Sparkles, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export const dynamic = "force-dynamic";
+export default function DashboardPage() {
+  const [data, setData] = React.useState<any>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
 
-export default async function DashboardPage() {
-  // Query details for mock user
-  const user = await db.user.findFirst({
-    include: {
-      wallet: true,
-      profile: true,
-      bookings: {
-        orderBy: { createdAt: "desc" },
-        take: 3,
-        include: { vehicle: { include: { brand: true, model: true } } },
-      },
-    },
-  });
+  const fetchDashboardStatus = React.useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/dashboard/status");
+      const json = await res.json();
+      if (json.success) {
+        setData(json.data);
+      } else {
+        setError(json.message || "Failed to load dashboard data");
+      }
+    } catch (err: any) {
+      setError("Network error fetching dashboard details");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  if (!user) {
+  React.useEffect(() => {
+    fetchDashboardStatus();
+  }, [fetchDashboardStatus]);
+
+  if (loading && !data) {
     return (
-      <div className="text-sm text-muted-foreground">
-        User session not allocated. Please run seed.
+      <div className="space-y-8 animate-pulse">
+        {/* Banner Skeleton */}
+        <div className="h-28 w-full rounded-2xl bg-muted/60" />
+        {/* Onboarding Skeleton */}
+        <div className="h-40 w-full rounded-2xl bg-muted/60" />
+        {/* Workflow Cards Grid Skeleton */}
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="h-64 rounded-2xl bg-muted/60" />
+          <div className="h-64 rounded-2xl bg-muted/60" />
+          <div className="h-64 rounded-2xl bg-muted/60" />
+          <div className="h-64 rounded-2xl bg-muted/60" />
+        </div>
       </div>
     );
   }
 
-  const kycStatus = "VERIFIED";
-  const walletBalance = user.wallet?.balance?.toNumber() || 0;
-  const recentBookings = user.bookings;
-  const fullName = user.profile ? `${user.profile.firstName} ${user.profile.lastName}` : "Customer";
+  if (error && !data) {
+    return (
+      <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-8 text-center space-y-4">
+        <h2 className="font-display text-lg font-bold text-destructive">Error Loading Dashboard</h2>
+        <p className="text-sm text-muted-foreground">{error}</p>
+        <Button onClick={fetchDashboardStatus} variant="outline">
+          <RefreshCw className="mr-2 h-4 w-4" /> Retry Data Sync
+        </Button>
+      </div>
+    );
+  }
+
+  const {
+    profile,
+    user,
+    profileFields,
+    completedFieldsCount,
+    totalFields,
+    profileCompletionPercentage,
+    isProfileComplete,
+    kycProgress,
+    bookings = [],
+  } = data || {};
+
+  const fullName = profile?.fullName || "Valued Guest";
+  const isKycApproved = kycProgress?.overallKycStatus === "APPROVED";
+  const hasBookings = bookings.length > 0;
+  const hasCompletedBookings = bookings.some(
+    (b: any) => b.status === "COMPLETED" || b.status === "FINISHED"
+  );
 
   return (
     <div className="space-y-8">
       {/* Welcome Banner */}
-      <div className="space-y-2 rounded-2xl border border-border bg-card p-6 md:p-8">
-        <h1 className="font-display text-2xl font-bold tracking-tight text-foreground md:text-3xl">
-          Welcome back, {fullName}!
-        </h1>
-        <p className="max-w-lg text-sm text-muted-foreground">
-          Manage your self-drive reservations, audit transaction details, and upload driving
-          credentials.
-        </p>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-3">
-        {/* Wallet Overview Card */}
-        <div className="space-y-4 rounded-xl border border-border bg-card/30 p-5">
-          <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            <Wallet className="h-4 w-4" /> Wallet Balance
-          </span>
-          <div className="text-2xl font-extrabold text-foreground">&#8377;{walletBalance}</div>
-          <Link href="/dashboard/wallet" className="block text-xs font-semibold hover:underline">
-            View transaction history &rarr;
-          </Link>
-        </div>
-
-        {/* KYC Status Card */}
-        <div className="space-y-4 rounded-xl border border-border bg-card/30 p-5">
-          <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            <ShieldCheck className="h-4 w-4" /> KYC Status
-          </span>
+      <div className="relative overflow-hidden space-y-2 rounded-2xl border border-border bg-gradient-to-r from-card via-card/80 to-card p-6 md:p-8 shadow-sm">
+        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
           <div>
-            <span className="inline-flex rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-500">
-              {kycStatus}
-            </span>
+            <div className="flex items-center gap-2">
+              <h1 className="font-display text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+                Welcome to Tripzy, {fullName}!
+              </h1>
+              {isKycApproved && (
+                <span title="Verified Account">
+                  <CheckCircle2 className="h-6 w-6 text-emerald-500" />
+                </span>
+              )}
+            </div>
+            <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+              Complete your profile and KYC verification to unlock seamless self-drive rentals across India.
+            </p>
           </div>
-          <Link href="/dashboard/kyc" className="block text-xs font-semibold hover:underline">
-            View documents &rarr;
-          </Link>
-        </div>
-
-        {/* Notifications Card */}
-        <div className="space-y-4 rounded-xl border border-border bg-card/30 p-5">
-          <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            <Bell className="h-4 w-4" /> Notifications
-          </span>
-          <p className="text-xs leading-relaxed text-muted-foreground">
-            Your verification documents have been audited and approved standard.
-          </p>
-          <span className="cursor-default text-xs font-semibold text-foreground/80">
-            0 unread updates
-          </span>
+          <div className="flex items-center gap-3">
+            <Button size="sm" variant="ghost" onClick={fetchDashboardStatus} title="Refresh Live Data">
+              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} /> Sync State
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* Bookings Overview */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="font-display text-lg font-bold text-foreground">Recent Reservations</h3>
-          <Link href="/dashboard/bookings">
-            <Button size="sm" variant="ghost">
-              View All
-            </Button>
-          </Link>
-        </div>
+      {/* Onboarding Progress Tracker */}
+      <OnboardingTracker
+        isProfileComplete={isProfileComplete}
+        profileCompletionPercentage={profileCompletionPercentage}
+        kycStatus={kycProgress?.overallKycStatus || "NOT_STARTED"}
+        hasBookings={hasBookings}
+        hasCompletedBookings={hasCompletedBookings}
+      />
 
-        <div className="grid gap-4">
-          {recentBookings.length > 0 ? (
-            recentBookings.map((b: any) => (
-              <div
-                key={b.id}
-                className="flex flex-col justify-between gap-4 rounded-xl border border-border bg-card/45 p-5 shadow-sm sm:flex-row sm:items-center"
-              >
-                <div className="space-y-1">
-                  <span className="flex items-center gap-1 font-mono text-xs text-muted-foreground">
-                    <Clock className="h-3 w-3" /> Booking Ref: {b.bookingNumber}
-                  </span>
-                  <div className="text-sm font-semibold text-foreground">
-                    {b.vehicle.brand.name} {b.vehicle.model.name}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {new Date(b.pickupDate).toLocaleDateString()} to{" "}
-                    {new Date(b.returnDate).toLocaleDateString()}
-                  </div>
-                </div>
-                <Link href={`/bookings/${b.id}`}>
-                  <Button size="sm" variant="outline" className="group">
-                    Details{" "}
-                    <ArrowUpRight className="ml-1 h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                  </Button>
-                </Link>
-              </div>
-            ))
-          ) : (
-            <div className="rounded-xl border border-dashed border-border p-8 text-center text-xs text-muted-foreground">
-              No recent reservations logged in your history.
-            </div>
-          )}
-        </div>
+      {/* Primary 4 Workflow Cards Grid */}
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Card 1: Complete Profile */}
+        <CompleteProfileCard
+          isProfileComplete={isProfileComplete}
+          profileCompletionPercentage={profileCompletionPercentage}
+          completedFieldsCount={completedFieldsCount}
+          totalFields={totalFields}
+          profileFields={profileFields}
+          initialData={{
+            firstName: profile?.firstName,
+            lastName: profile?.lastName,
+            email: user?.email,
+            phone: user?.phone,
+            dateOfBirth: profile?.dateOfBirth,
+            gender: profile?.gender,
+            street: profile?.address?.split(",")[0],
+            zipCode: profile?.address?.split(",")[1]?.trim(),
+            emergencyContactName: data?.emergencyContact?.name,
+            emergencyContactPhone: data?.emergencyContact?.phone,
+            emergencyContactRelationship: data?.emergencyContact?.relationship,
+          }}
+          onRefresh={fetchDashboardStatus}
+        />
+
+        {/* Card 2: Complete KYC */}
+        <CompleteKycCard
+          kycProgress={
+            kycProgress || {
+              dlStatus: "NOT_STARTED",
+              aadharStatus: "NOT_STARTED",
+              selfieStatus: "NOT_STARTED",
+              overallKycStatus: "NOT_STARTED",
+              rejectionReason: null,
+            }
+          }
+          isProfileComplete={isProfileComplete}
+          onRefresh={fetchDashboardStatus}
+        />
+
+        {/* Card 3: Select & Book Car */}
+        <SelectBookCarCard
+          isKycApproved={isKycApproved}
+          kycStatusText={kycProgress?.overallKycStatus || "PENDING"}
+        />
+
+        {/* Card 4: My Bookings */}
+        <MyBookingsCard bookings={bookings} />
       </div>
     </div>
   );
 }
-export type DashboardPageType = typeof DashboardPage;

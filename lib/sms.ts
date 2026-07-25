@@ -8,19 +8,25 @@ export async function sendSms(
   message: string,
 ) {
   try {
-    // MSG91 integration
-    const params = new URLSearchParams({
-      authkey: env.MSG91_AUTH_KEY,
-      mobiles: recipientPhone.replace("+", ""),
-      message,
+    const cleanedPhone = recipientPhone.replace("+", "");
+    const body = {
       sender: env.MSG91_SENDER_ID,
       route: env.MSG91_ROUTE,
-    });
+      sms: [
+        {
+          message,
+          to: [cleanedPhone]
+        }
+      ]
+    };
 
     const response = await fetch("https://api.msg91.com/api/v2/sendsms", {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: params.toString(),
+      headers: { 
+        "Content-Type": "application/json",
+        "authkey": env.MSG91_AUTH_KEY
+      },
+      body: JSON.stringify(body),
     });
 
     const result = await response.json();
