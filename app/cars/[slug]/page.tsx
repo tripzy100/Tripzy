@@ -15,55 +15,83 @@ interface PageProps {
 
 // Dynamic SEO metadata mapping
 export async function generateMetadata({ params }: PageProps) {
-  const resolvedParams = await params;
-  const tokens = resolvedParams.slug.split("-");
-  const brandName = tokens[0] || "";
-  const modelName = tokens[1] || "";
+  try {
+    const resolvedParams = await params;
+    const tokens = resolvedParams.slug.split("-");
+    const brandName = tokens[0] || "";
+    const modelName = tokens[1] || "";
 
-  const vehicle = await db.vehicle.findFirst({
-    where: {
-      deletedAt: null,
-      brand: { name: { contains: brandName, mode: "insensitive" } },
-      model: { name: { contains: modelName, mode: "insensitive" } },
-    },
-    include: { brand: true, model: true },
-  });
+    const vehicle = await db.vehicle.findFirst({
+      where: {
+        deletedAt: null,
+        brand: { name: { contains: brandName, mode: "insensitive" } },
+        model: { name: { contains: modelName, mode: "insensitive" } },
+      },
+      include: { brand: true, model: true },
+    });
 
-  if (!vehicle) return constructMetadata();
+    if (!vehicle) return constructMetadata();
 
-  const title = `${vehicle.brand.name} ${vehicle.model.name} for Rent`;
-  const description = `Rent a self-drive ${vehicle.brand.name} ${vehicle.model.name} in ${vehicle.color}. Clean, fully insured, and verified.`;
-  return constructMetadata({ title, description });
+    const title = `${vehicle.brand.name} ${vehicle.model.name} for Rent`;
+    const description = `Rent a self-drive ${vehicle.brand.name} ${vehicle.model.name} in ${vehicle.color}. Clean, fully insured, and verified.`;
+    return constructMetadata({ title, description });
+  } catch {
+    return constructMetadata();
+  }
 }
 
 export default async function CarDetailPage({ params }: PageProps) {
-  const resolvedParams = await params;
-  const tokens = resolvedParams.slug.split("-");
-  const brandName = tokens[0] || "";
-  const modelName = tokens[1] || "";
+  let vehicle: any = null;
+  let pickupLocations: any[] = [];
+  let dropLocations: any[] = [];
 
-  const vehicle = await db.vehicle.findFirst({
-    where: {
-      deletedAt: null,
-      brand: { name: { contains: brandName, mode: "insensitive" } },
-      model: { name: { contains: modelName, mode: "insensitive" } },
-    },
-    include: {
-      brand: true,
-      model: true,
-      city: true,
-      pricings: true,
-    },
-  });
+  try {
+    const resolvedParams = await params;
+    const tokens = resolvedParams.slug.split("-");
+    const brandName = tokens[0] || "";
+    const modelName = tokens[1] || "";
+
+    vehicle = await db.vehicle.findFirst({
+      where: {
+        deletedAt: null,
+        brand: { name: { contains: brandName, mode: "insensitive" } },
+        model: { name: { contains: modelName, mode: "insensitive" } },
+      },
+      include: {
+        brand: true,
+        model: true,
+        city: true,
+        pricings: true,
+      },
+    });
+
+    if (!vehicle) {
+      // Fallback: try finding first available vehicle
+      vehicle = await db.vehicle.findFirst({
+        where: { deletedAt: null },
+        include: {
+          brand: true,
+          model: true,
+          city: true,
+          pricings: true,
+        },
+      });
+    }
+
+    const [pickups, drops] = await Promise.all([
+      db.pickupLocation.findMany({ where: { isActive: true } }),
+      db.dropLocation.findMany({ where: { isActive: true } }),
+    ]);
+
+    pickupLocations = pickups;
+    dropLocations = drops;
+  } catch (error) {
+    console.error("Error in CarDetailPage:", error);
+  }
 
   if (!vehicle) {
     notFound();
   }
-
-  const [pickupLocations, dropLocations] = await Promise.all([
-    db.pickupLocation.findMany({ where: { isActive: true } }),
-    db.dropLocation.findMany({ where: { isActive: true } }),
-  ]);
 
   return (
     <>
