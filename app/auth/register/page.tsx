@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Car, User, Mail, Shield, Smartphone, CheckCircle, ArrowLeft, Lock, ArrowRight, Loader2 } from "lucide-react";
+import { Car, User, Mail, Smartphone, CheckCircle, ArrowLeft, Lock, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { OtpInput } from "@/components/auth/otp-input";
 import { useToast } from "@/providers/app-provider";

@@ -1,16 +1,16 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { OnboardingTracker } from "@/components/dashboard/OnboardingTracker";
 import { CompleteProfileCard } from "@/components/dashboard/CompleteProfileCard";
 import { CompleteKycCard } from "@/components/dashboard/CompleteKycCard";
 import { SelectBookCarCard } from "@/components/dashboard/SelectBookCarCard";
 import { MyBookingsCard } from "@/components/dashboard/MyBookingsCard";
-import { Wallet, ShieldCheck, Bell, RefreshCw, Sparkles, CheckCircle2 } from "lucide-react";
+import { RefreshCw, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [data, setData] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -26,7 +26,7 @@ export default function DashboardPage() {
       } else {
         setError(json.message || "Failed to load dashboard data");
       }
-    } catch (err: any) {
+    } catch {
       setError("Network error fetching dashboard details");
     } finally {
       setLoading(false);
@@ -82,6 +82,7 @@ export default function DashboardPage() {
   const fullName = profile?.fullName || "Valued Guest";
   const isKycApproved = kycProgress?.overallKycStatus === "APPROVED";
   const hasBookings = bookings.length > 0;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const hasCompletedBookings = bookings.some(
     (b: any) => b.status === "COMPLETED" || b.status === "FINISHED"
   );

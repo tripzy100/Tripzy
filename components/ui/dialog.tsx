@@ -25,10 +25,11 @@ export function Dialog({
   className,
 }: DialogProps) {
   const isVisible = open !== undefined ? open : !!isOpen;
-  const handleClose = () => {
+
+  const handleClose = React.useCallback(() => {
     if (onClose) onClose();
     if (onOpenChange) onOpenChange(false);
-  };
+  }, [onClose, onOpenChange]);
 
   // Close dialog on ESC key
   React.useEffect(() => {
@@ -45,7 +46,7 @@ export function Dialog({
       document.body.style.overflow = "unset";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isVisible]);
+  }, [isVisible, handleClose]);
 
   return (
     <AnimatePresence>

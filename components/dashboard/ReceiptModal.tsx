@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { FileText, Download, Printer, CheckCircle2, Car } from "lucide-react";
+import { FileText, Download, CheckCircle2, Car } from "lucide-react";
 import { useToast } from "@/providers/app-provider";
 
 interface ReceiptModalProps {

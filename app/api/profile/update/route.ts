@@ -77,9 +77,9 @@ export async function POST(request: Request) {
       });
 
       // Get default city, state, country if needed
-      let defaultCity = await db.city.findFirst();
-      let defaultState = await db.state.findFirst();
-      let defaultCountry = await db.country.findFirst();
+      const defaultCity = await db.city.findFirst();
+      const defaultState = await db.state.findFirst();
+      const defaultCountry = await db.country.findFirst();
 
       if (existingAddress) {
         await db.address.update({
@@ -135,10 +135,11 @@ export async function POST(request: Request) {
       success: true,
       message: "Profile updated successfully",
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Profile update error:", error);
+    const msg = error instanceof Error ? error.message : "Failed to update profile";
     return NextResponse.json(
-      { success: false, message: error.message || "Failed to update profile" },
+      { success: false, message: msg },
       { status: 500 }
     );
   }

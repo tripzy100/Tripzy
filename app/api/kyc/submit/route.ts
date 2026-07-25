@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { drivingLicenseNumber, aadharNumber, selfieUploaded, autoApprove = true } = body;
+    const { drivingLicenseNumber, aadharNumber, autoApprove = true } = body;
 
     if (!drivingLicenseNumber || !aadharNumber) {
       return NextResponse.json(
@@ -135,9 +135,9 @@ export async function POST(request: Request) {
         : "KYC Documents submitted for review",
       status: targetStatus,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("KYC submission error:", error);
-    if (error.code === "P2002") {
+    if (typeof error === "object" && error !== null && "code" in error && (error as { code?: string }).code === "P2002") {
       return NextResponse.json(
         { success: false, message: "This Driving License or Aadhaar is already registered with another account." },
         { status: 400 }

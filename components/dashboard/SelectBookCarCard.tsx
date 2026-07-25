@@ -2,16 +2,16 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Car, Lock, Search, Calendar, ShieldAlert, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Car, Lock, Search, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "./StatusBadge";
 
 interface SelectBookCarCardProps {
   isKycApproved: boolean;
-  kycStatusText: string;
+  kycStatusText?: string;
 }
 
-export function SelectBookCarCard({ isKycApproved, kycStatusText }: SelectBookCarCardProps) {
+export function SelectBookCarCard({ isKycApproved }: SelectBookCarCardProps) {
   const [showTooltip, setShowTooltip] = React.useState(false);
 
   return (

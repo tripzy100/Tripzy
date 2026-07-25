@@ -21,7 +21,7 @@ export function KycModal({ isOpen, onClose, onSuccess, initialDl = "", initialAa
 
   const [dlNumber, setDlNumber] = React.useState(initialDl || "DL-0420110098765");
   const [aadharNumber, setAadharNumber] = React.useState(initialAadhar || "5432 8765 1092");
-  const [selfieCaptured, setSelfieCaptured] = React.useState(true);
+  const selfieCaptured = true;
 
   React.useEffect(() => {
     if (initialDl) setDlNumber(initialDl);
@@ -50,7 +50,7 @@ export function KycModal({ isOpen, onClose, onSuccess, initialDl = "", initialAa
       } else {
         showToast(data.message || "Failed to submit KYC", "error");
       }
-    } catch (err: any) {
+    } catch {
       showToast("Network error submitting KYC", "error");
     } finally {
       setLoading(false);

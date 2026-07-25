@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Calendar, Clock, MapPin, ArrowUpRight, FileText, Car, CheckCircle2 } from "lucide-react";
+import { Calendar, Clock, ArrowUpRight, FileText, Car } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "./StatusBadge";
 import { ReceiptModal } from "./ReceiptModal";

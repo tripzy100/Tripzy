@@ -83,7 +83,7 @@ export function ProfileModal({ isOpen, onClose, onSuccess, initialData }: Profil
       } else {
         showToast(data.message || "Failed to update profile", "error");
       }
-    } catch (err: any) {
+    } catch {
       showToast("Network error updating profile", "error");
     } finally {
       setLoading(false);

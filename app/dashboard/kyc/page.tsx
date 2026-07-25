@@ -9,22 +9,19 @@ import { StatusBadge } from "@/components/dashboard/StatusBadge";
 
 export default function KycPage() {
   const { showToast } = useToast();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [data, setData] = React.useState<any>(null);
-  const [loading, setLoading] = React.useState(true);
   const [modalOpen, setModalOpen] = React.useState(false);
 
   const fetchKycData = React.useCallback(async () => {
-    setLoading(true);
     try {
       const res = await fetch("/api/dashboard/status");
       const json = await res.json();
       if (json.success) {
         setData(json.data);
       }
-    } catch (err) {
+    } catch {
       showToast("Error loading KYC data", "error");
-    } finally {
-      setLoading(false);
     }
   }, [showToast]);
 
