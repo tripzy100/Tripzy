@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertCircle, CheckCircle2, Info, X } from "lucide-react";
+import { AuthProvider } from "@/providers/auth-provider";
 
 // 1. TanStack Query Configuration
 const createQueryClient = () =>
@@ -64,7 +65,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <NextThemesProvider attribute="class" defaultTheme="dark" enableSystem>
         <ToastContext.Provider value={{ showToast }}>
-          {children}
+          <AuthProvider>{children}</AuthProvider>
 
           {/* Toast Container Overlay */}
           <div className="fixed bottom-4 right-4 z-50 flex w-full max-w-sm flex-col gap-2">

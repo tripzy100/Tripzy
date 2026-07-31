@@ -1,15 +1,20 @@
 "use client";
 
 import * as React from "react";
+import { useSearchParams } from "next/navigation";
 import { OnboardingTracker } from "@/components/dashboard/OnboardingTracker";
 import { CompleteProfileCard } from "@/components/dashboard/CompleteProfileCard";
 import { CompleteKycCard } from "@/components/dashboard/CompleteKycCard";
 import { SelectBookCarCard } from "@/components/dashboard/SelectBookCarCard";
 import { MyBookingsCard } from "@/components/dashboard/MyBookingsCard";
-import { RefreshCw, CheckCircle2 } from "lucide-react";
+import { RefreshCw, CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/providers/app-provider";
 
-export default function DashboardPage() {
+function DashboardContent() {
+  const searchParams = useSearchParams();
+  const { showToast } = useToast();
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [data, setData] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
@@ -36,6 +41,15 @@ export default function DashboardPage() {
   React.useEffect(() => {
     fetchDashboardStatus();
   }, [fetchDashboardStatus]);
+
+  React.useEffect(() => {
+    const reason = searchParams.get("reason") || searchParams.get("error");
+    if (reason === "profile_required") {
+      showToast("Please complete your profile details to unlock car browsing.", "error");
+    } else if (reason === "kyc_required_for_payment") {
+      showToast("KYC verification is required before unlocking payment.", "error");
+    }
+  }, [searchParams, showToast]);
 
   if (loading && !data) {
     return (
@@ -124,7 +138,7 @@ export default function DashboardPage() {
         hasCompletedBookings={hasCompletedBookings}
       />
 
-      {/* Primary 4 Workflow Cards Grid */}
+      {/* Progressive 4 Workflow Cards Grid */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Card 1: Complete Profile */}
         <CompleteProfileCard
@@ -166,6 +180,7 @@ export default function DashboardPage() {
 
         {/* Card 3: Select & Book Car */}
         <SelectBookCarCard
+          isProfileComplete={isProfileComplete}
           isKycApproved={isKycApproved}
           kycStatusText={kycProgress?.overallKycStatus || "PENDING"}
         />
@@ -174,5 +189,13 @@ export default function DashboardPage() {
         <MyBookingsCard bookings={bookings} />
       </div>
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <React.Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground text-sm">Loading dashboard...</div>}>
+      <DashboardContent />
+    </React.Suspense>
   );
 }

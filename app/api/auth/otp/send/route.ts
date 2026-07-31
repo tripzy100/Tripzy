@@ -1,56 +1,31 @@
 import { NextResponse } from "next/server";
 import { sendOtp } from "@/features/auth/services/otp-service";
-import { OtpType } from "@prisma/client";
+import { otpSendSchema } from "@/lib/services/validation-service";
+import { resendVerificationCode } from "@/lib/services/auth-service";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { identifier, type } = body;
+    
+    // Support either email or identifier
+    const identifier = body.email || body.identifier;
+    const type = body.type || "EMAIL_VERIFICATION";
 
-    if (!identifier || !type) {
+    const parsed = otpSendSchema.safeParse({ identifier, type });
+    if (!parsed.success) {
       return NextResponse.json(
-        { success: false, message: "Missing identifier or type" },
+        { success: false, message: parsed.error.issues[0]?.message || "Invalid input parameters" },
         { status: 400 },
       );
     }
 
-    if (!Object.values(OtpType).includes(type)) {
-      return NextResponse.json({ success: false, message: "Invalid OTP type" }, { status: 400 });
+    if (type === "EMAIL_VERIFICATION") {
+      const res = await resendVerificationCode(parsed.data.identifier);
+      const status = res.success ? 200 : 400;
+      return NextResponse.json(res, { status });
     }
 
-    if (type === "PHONE_VERIFICATION" && !/^\+?\d{10,15}$/.test(identifier)) {
-      return NextResponse.json(
-        { success: false, message: "Invalid phone number format" },
-        { status: 400 },
-      );
-    }
-
-    if (type === "EMAIL_VERIFICATION" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier)) {
-      return NextResponse.json(
-        { success: false, message: "Invalid email format" },
-        { status: 400 },
-      );
-    }
-
-    const existingUser = await import("@/lib/db").then(({ db }) =>
-      db.user.findFirst({
-        where: {
-          OR: [
-            ...(type === "PHONE_VERIFICATION" ? [{ phone: identifier }] : []),
-            ...(type === "EMAIL_VERIFICATION" ? [{ email: identifier }] : []),
-          ],
-        },
-      }),
-    );
-
-    if (existingUser) {
-      return NextResponse.json(
-        { success: false, message: "An account with this identifier already exists" },
-        { status: 409 },
-      );
-    }
-
-    const result = await sendOtp(identifier, type);
+    const result = await sendOtp(parsed.data.identifier, parsed.data.type);
     const status = result.success ? 200 : 429;
     return NextResponse.json(result, { status });
   } catch (error) {

@@ -6,88 +6,53 @@ export async function GET() {
   try {
     const userId = await getCurrentUserId();
 
-    let user = null;
-    if (userId) {
-      user = await db.user.findUnique({
-        where: { id: userId },
-        include: {
-          profile: {
-            include: {
-              addresses: {
-                include: {
-                  city: true,
-                  state: true,
-                  country: true,
-                },
-              },
-            },
-          },
-          drivingLicence: true,
-          identities: true,
-          kycRequests: {
-            orderBy: { createdAt: "desc" },
-            take: 1,
-          },
-          emergencyContacts: true,
-          bookings: {
-            orderBy: { createdAt: "desc" },
-            include: {
-              vehicle: {
-                include: {
-                  brand: true,
-                  model: true,
-                },
-              },
-              invoices: true,
-              payments: true,
-            },
-          },
-        },
-      });
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized. Please sign in." },
+        { status: 401 }
+      );
     }
 
-    // Fallback for dev / unauthenticated seed state
-    if (!user) {
-      user = await db.user.findFirst({
-        include: {
-          profile: {
-            include: {
-              addresses: {
-                include: {
-                  city: true,
-                  state: true,
-                  country: true,
-                },
+    const user = await db.user.findUnique({
+      where: { id: userId },
+      include: {
+        profile: {
+          include: {
+            addresses: {
+              include: {
+                city: true,
+                state: true,
+                country: true,
               },
-            },
-          },
-          drivingLicence: true,
-          identities: true,
-          kycRequests: {
-            orderBy: { createdAt: "desc" },
-            take: 1,
-          },
-          emergencyContacts: true,
-          bookings: {
-            orderBy: { createdAt: "desc" },
-            include: {
-              vehicle: {
-                include: {
-                  brand: true,
-                  model: true,
-                },
-              },
-              invoices: true,
-              payments: true,
             },
           },
         },
-      });
-    }
+        drivingLicence: true,
+        identities: true,
+        kycRequests: {
+          orderBy: { createdAt: "desc" },
+          take: 1,
+        },
+        emergencyContacts: true,
+        bookings: {
+          orderBy: { createdAt: "desc" },
+          include: {
+            vehicle: {
+              include: {
+                brand: true,
+                model: true,
+              },
+            },
+            invoices: true,
+            payments: true,
+          },
+        },
+      },
+    });
 
     if (!user) {
       return NextResponse.json(
-        { success: false, message: "User record not found. Please run seed script." },
+        { success: false, message: "User record not found." },
         { status: 404 }
       );
     }

@@ -5,17 +5,20 @@ import { ArrowLeft, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface OtpInputProps {
-  phone: string;
+  phone?: string;
+  email?: string;
   onVerify: (otp: string) => Promise<void>;
   onResend: () => Promise<void>;
   onBack: () => void;
   loading: boolean;
 }
 
-export function OtpInput({ phone, onVerify, onResend, onBack, loading }: OtpInputProps) {
+export function OtpInput({ phone, email, onVerify, onResend, onBack, loading }: OtpInputProps) {
   const [otp, setOtp] = React.useState(["", "", "", "", "", ""]);
   const [resendCooldown, setResendCooldown] = React.useState(0);
   const inputRefs = React.useRef<(HTMLInputElement | null)[]>([]);
+
+  const identifier = email || phone || "";
 
   React.useEffect(() => {
     inputRefs.current[0]?.focus();
@@ -66,7 +69,7 @@ export function OtpInput({ phone, onVerify, onResend, onBack, loading }: OtpInpu
   };
 
   const handleResend = async () => {
-    setResendCooldown(30);
+    setResendCooldown(60);
     await onResend();
   };
 
@@ -80,11 +83,11 @@ export function OtpInput({ phone, onVerify, onResend, onBack, loading }: OtpInpu
           onClick={onBack}
           className="mx-auto mb-2 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
         >
-          <ArrowLeft className="h-3 w-3" /> Change phone number
+          <ArrowLeft className="h-3 w-3" /> Change email address
         </button>
         <p className="text-sm text-muted-foreground">
           Enter the 6-digit code sent to{" "}
-          <span className="font-semibold text-foreground">{phone}</span>
+          <span className="font-semibold text-foreground">{identifier}</span>
         </p>
       </div>
 

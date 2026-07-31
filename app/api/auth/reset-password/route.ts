@@ -1,35 +1,28 @@
 import { NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@/lib/supabase";
+import { resetPassword } from "@/lib/services/auth-service";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { password } = body;
+    const email = body.email;
+    const otp = body.otp;
+    const newPassword = body.newPassword || body.password;
+    const confirmPassword = body.confirmPassword || newPassword;
 
-    if (!password) {
-      return NextResponse.json(
-        { success: false, message: "Password is required" },
-        { status: 400 },
-      );
-    }
-
-    const supabase = await createRouteHandlerClient();
-    const { error } = await supabase.auth.updateUser({ password });
-
-    if (error) {
-      console.error("Supabase update password error:", error);
-      return NextResponse.json(
-        { success: false, message: error.message || "Failed to update password" },
-        { status: 400 },
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: "Password reset successfully",
+    const result = await resetPassword({
+      email,
+      otp,
+      newPassword,
+      confirmPassword,
     });
-  } catch (error) {
-    console.error("Reset Password API error:", error);
-    return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 });
+
+    const status = result.success ? 200 : 400;
+    return NextResponse.json(result, { status });
+  } catch (error: any) {
+    console.error("Reset password API error:", error);
+    return NextResponse.json(
+      { success: false, message: "Internal server error during password reset." },
+      { status: 500 },
+    );
   }
 }

@@ -4,16 +4,11 @@ import { getCurrentUserId } from "@/lib/supabase";
 
 export async function POST(request: Request) {
   try {
-    let userId = await getCurrentUserId();
-
-    if (!userId) {
-      const fallbackUser = await db.user.findFirst({ select: { id: true } });
-      userId = fallbackUser?.id || null;
-    }
+    const userId = await getCurrentUserId();
 
     if (!userId) {
       return NextResponse.json(
-        { success: false, message: "Unauthorized user session" },
+        { success: false, message: "Unauthorized. Please sign in." },
         { status: 401 }
       );
     }

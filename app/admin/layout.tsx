@@ -21,9 +21,11 @@ import {
   Mail,
   Brain,
   UserCheck,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CommandPalette } from "@/components/admin/command-palette";
+import { useAuth } from "@/providers/auth-provider";
 
 const adminNavItems = [
   { label: "Overview", href: "/admin", icon: LayoutDashboard },
@@ -45,6 +47,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const [collapsed, setCollapsed] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const { user, signOut } = useAuth();
+  const [signingOut, setSigningOut] = React.useState(false);
+
+  const displayName = user?.user_metadata?.name || user?.email?.split("@")[0] || "Admin";
+
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    await signOut();
+  };
 
   return (
     <div className="flex min-h-screen bg-muted/10">
@@ -80,10 +91,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {!collapsed && (
           <div className="rounded-lg border border-border/50 bg-muted/40 p-4">
             <div className="font-mono text-xs font-semibold uppercase tracking-wider text-foreground">
-              Sachit Bhatia
+              {displayName}
             </div>
             <div className="mt-0.5 text-[10px] font-semibold text-emerald-500">
-              Super Administrator
+              Administrator
             </div>
           </div>
         )}
@@ -115,8 +126,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <Button
           variant="ghost"
           className="w-full justify-start text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+          onClick={handleSignOut}
+          disabled={signingOut}
         >
-          <LogOut className="mr-2 h-4 w-4 shrink-0" /> {!collapsed && <span>Sign Out</span>}
+          {signingOut ? (
+            <Loader2 className="mr-2 h-4 w-4 shrink-0 animate-spin" />
+          ) : (
+            <LogOut className="mr-2 h-4 w-4 shrink-0" />
+          )}
+          {!collapsed && <span>{signingOut ? "Signing out..." : "Sign Out"}</span>}
         </Button>
       </aside>
 

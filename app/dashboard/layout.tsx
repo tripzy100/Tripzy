@@ -16,8 +16,10 @@ import {
   Award,
   Shield,
   Sparkles,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/providers/auth-provider";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -34,6 +36,17 @@ const navItems = [
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const { user, loading: authLoading, signOut } = useAuth();
+  const [signingOut, setSigningOut] = React.useState(false);
+
+  const displayName = user?.user_metadata?.name || user?.email?.split("@")[0] || "User";
+  const displayEmail = user?.email || "";
+
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    await signOut();
+    // signOut handles redirect
+  };
 
   return (
     <div className="flex min-h-screen bg-muted/20">
@@ -48,8 +61,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Profile Card Summary */}
         <div className="rounded-lg border border-border/50 bg-muted/40 p-4">
-          <div className="text-sm font-semibold text-foreground">Sachit Bhatia</div>
-          <div className="truncate text-xs text-muted-foreground">sachit@example.com</div>
+          {authLoading ? (
+            <div className="flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">Loading...</span>
+            </div>
+          ) : (
+            <>
+              <div className="text-sm font-semibold text-foreground">{displayName}</div>
+              <div className="truncate text-xs text-muted-foreground">{displayEmail}</div>
+            </>
+          )}
         </div>
 
         {/* Nav Links */}
@@ -77,8 +99,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <Button
           variant="ghost"
           className="w-full justify-start text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+          onClick={handleSignOut}
+          disabled={signingOut}
         >
-          <LogOut className="mr-2 h-4 w-4" /> Sign Out
+          {signingOut ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <LogOut className="mr-2 h-4 w-4" />
+          )}
+          {signingOut ? "Signing out..." : "Sign Out"}
         </Button>
       </aside>
 
@@ -115,6 +144,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </Link>
               );
             })}
+            <button
+              onClick={handleSignOut}
+              disabled={signingOut}
+              className="flex w-full items-center gap-3 rounded px-3 py-2 text-sm text-destructive hover:bg-destructive/10"
+            >
+              {signingOut ? (
+                <Loader2 className="h-4.5 w-4.5 animate-spin" />
+              ) : (
+                <LogOut className="h-4.5 w-4.5" />
+              )}
+              {signingOut ? "Signing out..." : "Sign Out"}
+            </button>
           </nav>
         )}
 

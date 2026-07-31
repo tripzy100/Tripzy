@@ -1,13 +1,15 @@
 "use client";
 
 import * as React from "react";
+import { useSearchParams } from "next/navigation";
 import { Upload, CheckCircle2, FileText, UserSquare, CreditCard, ShieldCheck, AlertTriangle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/providers/app-provider";
 import { KycModal } from "@/components/dashboard/KycModal";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
 
-export default function KycPage() {
+function KycContent() {
+  const searchParams = useSearchParams();
   const { showToast } = useToast();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [data, setData] = React.useState<any>(null);
@@ -29,6 +31,13 @@ export default function KycPage() {
     fetchKycData();
   }, [fetchKycData]);
 
+  React.useEffect(() => {
+    const reason = searchParams.get("reason");
+    if (reason === "kyc_required_for_payment") {
+      showToast("KYC verification is required before unlocking payment.", "error");
+    }
+  }, [searchParams, showToast]);
+
   const kycProgress = data?.kycProgress || {};
   const isApproved = kycProgress.overallKycStatus === "APPROVED";
   const isRejected = kycProgress.overallKycStatus === "REJECTED";
@@ -47,6 +56,17 @@ export default function KycPage() {
         </div>
         <StatusBadge status={isApproved ? "Approved" : isRejected ? "Rejected" : isInReview ? "In Review" : "Pending"} />
       </div>
+
+      {searchParams.get("reason") === "kyc_required_for_payment" && !isApproved && (
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-600 dark:text-amber-400 space-y-2">
+          <div className="flex items-center gap-2 font-bold text-sm">
+            <AlertTriangle className="h-5 w-5" /> KYC Approval Required for Payment
+          </div>
+          <p className="text-xs leading-relaxed">
+            Your vehicle reservation is saved. Please submit your Driving Licence, Aadhaar Card, and Verification Selfie to complete KYC approval and unlock payment.
+          </p>
+        </div>
+      )}
 
       {isRejected && (
         <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-xs text-destructive space-y-2">
@@ -193,5 +213,13 @@ export default function KycPage() {
         initialAadhar={data?.identityDocument?.documentNumber}
       />
     </div>
+  );
+}
+
+export default function KycPage() {
+  return (
+    <React.Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground text-sm">Loading KYC portal...</div>}>
+      <KycContent />
+    </React.Suspense>
   );
 }

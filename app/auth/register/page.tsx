@@ -4,12 +4,12 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Car, User, Mail, Smartphone, CheckCircle, ArrowLeft, Lock, ArrowRight, Loader2 } from "lucide-react";
+import { Car, User, Mail, Lock, CheckCircle, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { OtpInput } from "@/components/auth/otp-input";
 import { useToast } from "@/providers/app-provider";
 
-type RegisterStep = "details" | "otp" | "password" | "success";
+type RegisterStep = "details" | "otp" | "success";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -19,98 +19,52 @@ export default function RegisterPage() {
   const [loading, setLoading] = React.useState(false);
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
-  const [phone, setPhone] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
 
-  const handleSendOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name || !email || !phone) {
-      showToast("Please fill in all fields", "error");
-      return;
+  const validateInputs = () => {
+    if (!name.trim()) {
+      showToast("Please enter your full name", "error");
+      return false;
     }
-
-    const cleanPhone = phone.replace(/[\s-]/g, "");
-    if (!/^\+?\d{10,15}$/.test(cleanPhone)) {
-      showToast("Please enter a valid phone number", "error");
-      return;
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       showToast("Please enter a valid email address", "error");
-      return;
+      return false;
     }
-
-    setLoading(true);
-    try {
-      const res = await fetch("/api/auth/otp/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier: cleanPhone, type: "PHONE_VERIFICATION" }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setStep("otp");
-        showToast("OTP sent to your mobile number", "info");
-      } else {
-        showToast(data.message || "Failed to send OTP", "error");
-      }
-    } catch {
-      showToast("Network error. Please try again.", "error");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async (otp: string) => {
-    setLoading(true);
-    const cleanPhone = phone.replace(/[\s-]/g, "");
-    try {
-      const res = await fetch("/api/auth/otp/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier: cleanPhone, otp, type: "PHONE_VERIFICATION" }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setStep("password");
-        showToast("Phone verified successfully!", "success");
-      } else {
-        showToast(data.message || "Invalid OTP", "error");
-      }
-    } catch {
-      showToast("Network error. Please try again.", "error");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCreateAccount = async (e: React.FormEvent) => {
-    e.preventDefault();
     if (!password) {
-      showToast("Please choose a password", "error");
-      return;
+      showToast("Please enter a password", "error");
+      return false;
     }
     if (password.length < 8) {
-      showToast("Password must be at least 8 characters", "error");
-      return;
+      showToast("Password must be at least 8 characters long", "error");
+      return false;
     }
+    if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password)) {
+      showToast("Password must contain uppercase, lowercase, number, and special character", "error");
+      return false;
+    }
+    if (password !== confirmPassword) {
+      showToast("Passwords do not match", "error");
+      return false;
+    }
+    return true;
+  };
+
+  const handleRegisterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateInputs()) return;
 
     setLoading(true);
-    const cleanPhone = phone.replace(/[\s-]/g, "");
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone: cleanPhone, password }),
+        body: JSON.stringify({ name, email, password, confirmPassword }),
       });
       const data = await res.json();
       if (data.success) {
-        setStep("success");
-        showToast("Account created successfully!", "success");
-        setTimeout(() => {
-          router.push("/dashboard");
-          router.refresh();
-        }, 1500);
+        setStep("otp");
+        showToast(data.message || "Verification code sent to your email", "info");
       } else {
         showToast(data.message || "Registration failed", "error");
       }
@@ -121,27 +75,55 @@ export default function RegisterPage() {
     }
   };
 
+  const handleVerifyOtp = async (otp: string) => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/otp/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp, type: "EMAIL_VERIFICATION" }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setStep("success");
+        showToast("Email verified successfully!", "success");
+        router.refresh();
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 1500);
+      } else {
+        showToast(data.message || "Invalid OTP verification code", "error");
+      }
+    } catch {
+      showToast("Network error. Please try again.", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleResendOtp = async () => {
-    const cleanPhone = phone.replace(/[\s-]/g, "");
+    setLoading(true);
     try {
       const res = await fetch("/api/auth/otp/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier: cleanPhone, type: "PHONE_VERIFICATION" }),
+        body: JSON.stringify({ email, type: "EMAIL_VERIFICATION" }),
       });
       const data = await res.json();
       if (data.success) {
-        showToast("OTP resent to your mobile number", "info");
+        showToast(data.message || "Verification code resent to your email", "info");
       } else {
-        showToast(data.message || "Failed to resend OTP", "error");
+        showToast(data.message || "Failed to resend code", "error");
       }
     } catch {
-      showToast("Network error", "error");
+      showToast("Network error. Please try again.", "error");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6 py-12">
       <div className="w-full max-w-sm space-y-8">
         <Link href="/" className="flex items-center justify-center gap-2">
           <Car className="h-8 w-8 text-foreground" />
@@ -168,7 +150,7 @@ export default function RegisterPage() {
                   <p className="text-sm text-muted-foreground">Start your self-drive journey</p>
                 </div>
 
-                <form className="space-y-4" onSubmit={handleSendOtp}>
+                <form className="space-y-4" onSubmit={handleRegisterSubmit}>
                   <div className="space-y-2">
                     <label className="flex items-center gap-1.5 text-xs font-medium text-foreground">
                       <User className="h-3.5 w-3.5 text-muted-foreground" /> Full Name
@@ -178,9 +160,11 @@ export default function RegisterPage() {
                       required
                       value={name}
                       onChange={(e) => setName(e.target.value)}
+                      placeholder="John Doe"
                       className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                     />
                   </div>
+
                   <div className="space-y-2">
                     <label className="flex items-center gap-1.5 text-xs font-medium text-foreground">
                       <Mail className="h-3.5 w-3.5 text-muted-foreground" /> Email
@@ -190,23 +174,44 @@ export default function RegisterPage() {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      placeholder="name@example.com"
                       className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                     />
                   </div>
+
                   <div className="space-y-2">
                     <label className="flex items-center gap-1.5 text-xs font-medium text-foreground">
-                      <Smartphone className="h-3.5 w-3.5 text-muted-foreground" /> Phone
+                      <Lock className="h-3.5 w-3.5 text-muted-foreground" /> Password
                     </label>
                     <input
-                      type="tel"
+                      type="password"
                       required
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                    />
+                    <p className="text-[11px] text-muted-foreground">
+                      Min 8 chars, 1 uppercase, 1 lowercase, 1 number & 1 special char.
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-1.5 text-xs font-medium text-foreground">
+                      <Lock className="h-3.5 w-3.5 text-muted-foreground" /> Confirm Password
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="••••••••"
                       className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                     />
                   </div>
+
                   <Button type="submit" className="w-full mt-2" isLoading={loading}>
-                    Send OTP <ArrowRight className="ml-2 h-4 w-4" />
+                    Register & Send Code <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </form>
               </motion.div>
@@ -223,64 +228,19 @@ export default function RegisterPage() {
               >
                 <div className="space-y-1.5 text-center">
                   <h1 className="font-display text-xl font-bold text-foreground">
-                    Verify your phone
+                    Verify your email
                   </h1>
                   <p className="text-sm text-muted-foreground">
-                    We sent a code to your mobile number
+                    We sent a 6-digit verification code to your email
                   </p>
                 </div>
                 <OtpInput
-                  phone={phone}
+                  email={email}
                   onVerify={handleVerifyOtp}
                   onResend={handleResendOtp}
                   onBack={() => setStep("details")}
                   loading={loading}
                 />
-              </motion.div>
-            )}
-
-            {step === "password" && (
-              <motion.div
-                key="password"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.2 }}
-                className="space-y-6"
-              >
-                <div className="space-y-2">
-                  <button
-                    type="button"
-                    onClick={() => setStep("details")}
-                    className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
-                  >
-                    <ArrowLeft className="h-3 w-3" /> Change details
-                  </button>
-                  <h1 className="font-display text-xl font-bold text-foreground text-center">
-                    Secure your account
-                  </h1>
-                  <p className="text-sm text-muted-foreground text-center">
-                    Choose a strong password for logging in
-                  </p>
-                </div>
-
-                <form className="space-y-4" onSubmit={handleCreateAccount}>
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-1.5 text-xs font-medium text-foreground">
-                      <Lock className="h-3.5 w-3.5 text-muted-foreground" /> Choose Password
-                    </label>
-                    <input
-                      type="password"
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                    />
-                  </div>
-                  <Button type="submit" className="w-full mt-2" isLoading={loading}>
-                    Create Account
-                  </Button>
-                </form>
               </motion.div>
             )}
 
@@ -299,10 +259,10 @@ export default function RegisterPage() {
                 </div>
                 <div className="space-y-2">
                   <h1 className="font-display text-2xl font-bold text-foreground">
-                    Account Created!
+                    Email Verified!
                   </h1>
                   <p className="text-sm text-muted-foreground">
-                    Automatically logging you in...
+                    Account activated. Automatically logging you in...
                   </p>
                 </div>
                 <div className="flex justify-center">

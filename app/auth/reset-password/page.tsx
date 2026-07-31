@@ -3,9 +3,10 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Car, Shield, ArrowLeft } from "lucide-react";
+import { Car, Shield, ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/providers/app-provider";
+import { createClient } from "@/lib/supabase-browser";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -13,6 +14,38 @@ export default function ResetPasswordPage() {
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const [validatingSession, setValidatingSession] = React.useState(true);
+  const [hasValidSession, setHasValidSession] = React.useState(false);
+
+  // On mount, verify the user has a valid recovery session from the email callback
+  React.useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const supabase = createClient();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        if (session) {
+          setHasValidSession(true);
+        } else {
+          showToast(
+            "Invalid or expired reset link. Please request a new one.",
+            "error",
+          );
+          router.push("/auth/forgot-password");
+        }
+      } catch {
+        showToast("Failed to validate session.", "error");
+        router.push("/auth/forgot-password");
+      } finally {
+        setValidatingSession(false);
+      }
+    };
+
+    checkSession();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,6 +84,23 @@ export default function ResetPasswordPage() {
       setLoading(false);
     }
   };
+
+  // Show loading while validating session
+  if (validatingSession) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6">
+        <div className="flex items-center gap-3 text-muted-foreground">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <span className="text-sm">Validating reset link...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render the form if no valid session (user will be redirected)
+  if (!hasValidSession) {
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6">

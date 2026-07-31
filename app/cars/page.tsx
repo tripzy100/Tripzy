@@ -1,14 +1,17 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
+import { getCurrentUserId } from "@/lib/supabase";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import {
   CatalogFilters,
   CatalogFilterSidebar,
 } from "@/features/catalog/components/catalog-filters";
+import { CarImage } from "@/components/cars/car-image";
 import { Button } from "@/components/ui/button";
-import { Fuel, Star, Users, Car, CheckCircle2 } from "lucide-react";
+import { Fuel, Star, Users, Car } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -153,6 +156,42 @@ interface PageProps {
 }
 
 export default async function CarsPage({ searchParams }: PageProps) {
+  // Server-side Route Guard: Check if logged in user has completed their profile
+  const userId = await getCurrentUserId();
+  if (userId) {
+    const user = await db.user.findUnique({
+      where: { id: userId },
+      include: {
+        profile: {
+          include: {
+            addresses: true,
+          },
+        },
+        emergencyContacts: true,
+      },
+    });
+
+    if (user) {
+      const emergencyContact = user.emergencyContacts[0];
+      const primaryAddress = user.profile?.addresses[0];
+
+      const completedFieldsCount = [
+        !!(user.profile?.firstName && user.profile?.lastName),
+        !!user.email,
+        !!user.phone,
+        !!user.profile?.dateOfBirth,
+        !!user.profile?.gender,
+        !!(primaryAddress?.street || primaryAddress?.zipCode),
+        !!(emergencyContact?.name && emergencyContact?.phone),
+      ].filter(Boolean).length;
+
+      const isProfileComplete = completedFieldsCount === 7;
+      if (!isProfileComplete) {
+        redirect("/dashboard?reason=profile_required");
+      }
+    }
+  }
+
   let resolvedParams: any = {};
   try {
     resolvedParams = await searchParams;
@@ -174,10 +213,12 @@ export default async function CarsPage({ searchParams }: PageProps) {
     if (resolvedParams.category) {
       const catVal = resolvedParams.category.trim();
       where.category = {
-        OR: [
-          { name: { contains: catVal, mode: "insensitive" } },
-          { slug: { contains: catVal.toLowerCase().replace(/\s+/g, "-"), mode: "insensitive" } },
-        ],
+        is: {
+          OR: [
+            { name: { contains: catVal, mode: "insensitive" } },
+            { slug: { contains: catVal.toLowerCase().replace(/\s+/g, "-"), mode: "insensitive" } },
+          ],
+        },
       };
     }
     if (resolvedParams.search) {
@@ -231,7 +272,6 @@ export default async function CarsPage({ searchParams }: PageProps) {
       };
     });
   } else {
-    // Apply filters to FALLBACK_FLEET if database has 0 records or no match
     formattedList = FALLBACK_FLEET.filter((car) => {
       if (resolvedParams.transmission && car.transmission !== resolvedParams.transmission) {
         return false;
@@ -259,7 +299,6 @@ export default async function CarsPage({ searchParams }: PageProps) {
       return true;
     });
 
-    // If active filters produced 0 results, return full fallback list so user is never stuck with an empty view
     if (formattedList.length === 0 && !resolvedParams.search && !resolvedParams.category && !resolvedParams.transmission && !resolvedParams.fuelType) {
       formattedList = FALLBACK_FLEET;
     }
@@ -301,7 +340,7 @@ export default async function CarsPage({ searchParams }: PageProps) {
           </div>
         </div>
 
-        {/* Client-owned search + filter controls */}
+        {/* Search + filter controls */}
         <Suspense fallback={<div className="mb-6 h-12 animate-pulse rounded-xl bg-muted/30" />}>
           <CatalogFilters />
         </Suspense>
@@ -336,13 +375,9 @@ export default async function CarsPage({ searchParams }: PageProps) {
                       className="group overflow-hidden rounded-xl border border-border bg-card/40 shadow-sm transition-all hover:border-border/80 hover:shadow-md"
                     >
                       <div className="relative flex h-44 w-full items-center justify-center overflow-hidden bg-muted">
-                        <img
+                        <CarImage
                           src={`/cars/${imgSlug}.png`}
                           alt={`${car.brandName} ${car.modelName}`}
-                          onError={(e) => {
-                            (e.target as HTMLElement).style.display = "none";
-                          }}
-                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                         <Car className="h-12 w-12 text-muted-foreground/30 absolute" />
                       </div>
