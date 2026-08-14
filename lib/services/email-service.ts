@@ -125,9 +125,40 @@ async function sendMail(
   subject: string,
   body: string,
 ): Promise<{ success: boolean; error?: string }> {
-  try {
+   try {
+    const isDevMode =
+      process.env.NODE_ENV !== "production" &&
+      (!process.env.RESEND_API_KEY || process.env.RESEND_API_KEY.startsWith("re_mock") || process.env.RESEND_API_KEY === "re_your_resend_api_key");
+
+    if (isDevMode) {
+      console.log("[EmailService] (DEV) Email not sent — logging to console:");
+      console.log("  To:", recipientEmail);
+      console.log("  Subject:", subject);
+      console.log("  Preview (text):", body.replace(/<[^>]*>/g, "").trim().slice(0, 200));
+
+      try {
+        await db.emailSent.create({
+          data: {
+            userId,
+            recipientEmail,
+            subject,
+            body,
+            status: LogStatus.SENT,
+            providerMessageId: null,
+            errorReason: null,
+          },
+        });
+      } catch (dbError) {
+        console.error("[EmailService] Failed to log email in DB:", dbError);
+      }
+
+      return { success: true };
+    }
+
+    const resendFrom = process.env.RESEND_FROM_EMAIL || "Tripzy <notifications@tripzytours.in>";
+
     const { data, error } = await resend.emails.send({
-      from: "Tripzy <notifications@tripzy.com>",
+      from: resendFrom,
       to: [recipientEmail],
       subject,
       html: body,

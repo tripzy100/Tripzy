@@ -10,7 +10,7 @@ export async function sendEmail(
 ) {
   try {
     const { data, error } = await resend.emails.send({
-      from: "Tripzy <notifications@tripzy.com>",
+      from: process.env.RESEND_FROM_EMAIL || "Tripzy <notifications@tripzytours.in>",
       to: [recipientEmail],
       subject,
       html: body,
