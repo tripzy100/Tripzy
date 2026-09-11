@@ -5,22 +5,17 @@ import { DocumentStatus, DocumentType } from "@prisma/client";
 
 export async function POST(request: Request) {
   try {
-    let userId = await getCurrentUserId();
-
-    if (!userId) {
-      const fallbackUser = await db.user.findFirst({ select: { id: true } });
-      userId = fallbackUser?.id || null;
-    }
+    const userId = await getCurrentUserId();
 
     if (!userId) {
       return NextResponse.json(
-        { success: false, message: "Unauthorized user session" },
+        { success: false, message: "Unauthorized. Please sign in." },
         { status: 401 }
       );
     }
 
     const body = await request.json();
-    const { drivingLicenseNumber, aadharNumber, autoApprove = true } = body;
+    const { drivingLicenseNumber, aadharNumber } = body;
 
     if (!drivingLicenseNumber || !aadharNumber) {
       return NextResponse.json(
@@ -46,25 +41,26 @@ export async function POST(request: Request) {
       );
     }
 
-    const targetStatus = autoApprove ? DocumentStatus.APPROVED : DocumentStatus.PENDING;
+    // Honest status lifecycle: KYC starts as PENDING until verified by authorized admin/process
+    const initialStatus = DocumentStatus.PENDING;
 
     // 1. Upsert Driving Licence
     await db.drivingLicence.upsert({
       where: { userId },
       update: {
         licenceNumber: cleanDl,
-        status: targetStatus,
-        verifiedAt: autoApprove ? new Date() : null,
+        status: initialStatus,
+        verifiedAt: null,
       },
       create: {
         userId,
         licenceNumber: cleanDl,
         issueCountry: "IN",
         expiryDate: new Date("2035-12-31"),
-        frontImageUrl: "https://mock.tripzy.io/dl_front.png",
-        backImageUrl: "https://mock.tripzy.io/dl_back.png",
-        status: targetStatus,
-        verifiedAt: autoApprove ? new Date() : null,
+        frontImageUrl: "",
+        backImageUrl: "",
+        status: initialStatus,
+        verifiedAt: null,
       },
     });
 
@@ -78,8 +74,8 @@ export async function POST(request: Request) {
         where: { id: existingAadhar.id },
         data: {
           documentNumber: cleanAadhar,
-          status: targetStatus,
-          verifiedAt: autoApprove ? new Date() : null,
+          status: initialStatus,
+          verifiedAt: null,
         },
       });
     } else {
@@ -88,9 +84,9 @@ export async function POST(request: Request) {
           userId,
           documentType: DocumentType.AADHAR,
           documentNumber: cleanAadhar,
-          imageUrl: "https://mock.tripzy.io/aadhar.png",
-          status: targetStatus,
-          verifiedAt: autoApprove ? new Date() : null,
+          imageUrl: "",
+          status: initialStatus,
+          verifiedAt: null,
         },
       });
     }
@@ -105,35 +101,29 @@ export async function POST(request: Request) {
       await db.kycRequest.update({
         where: { id: existingKycRequest.id },
         data: {
-          status: targetStatus,
+          status: initialStatus,
           rejectionReason: null,
-          reviewerNotes: autoApprove ? "Verified by Automated OCR System" : "Documents under review",
+          reviewerNotes: "Documents submitted for administrative verification queue",
         },
       });
     } else {
       await db.kycRequest.create({
         data: {
           userId,
-          status: targetStatus,
-          reviewerNotes: autoApprove ? "Verified by Automated OCR System" : "Documents under review",
+          status: initialStatus,
+          reviewerNotes: "Documents submitted for administrative verification queue",
         },
       });
     }
 
-    // 4. Update user.isKycVerified flag if auto-approved
-    if (autoApprove) {
-      await db.user.update({
-        where: { id: userId },
-        data: { isKycVerified: true },
-      });
-    }
+    // Mask sensitive Aadhaar in response
+    const maskedAadhaar = `XXXX-XXXX-${cleanAadhar.slice(-4)}`;
 
     return NextResponse.json({
       success: true,
-      message: autoApprove
-        ? "KYC Documents verified and approved successfully!"
-        : "KYC Documents submitted for review",
-      status: targetStatus,
+      message: "KYC Documents submitted successfully for verification review.",
+      status: initialStatus,
+      maskedAadhaar,
     });
   } catch (error: unknown) {
     console.error("KYC submission error:", error);

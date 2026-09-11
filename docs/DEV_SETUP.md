@@ -44,7 +44,7 @@ cp .env.example .env.local
 | Cashfree   | [cashfree.com](https://cashfree.com) → API Keys     |
 | Google Maps | [console.cloud.google.com](https://console.cloud.google.com) |
 | Resend     | [resend.com](https://resend.com) → API Keys         |
-| MSG91      | [msg91.com](https://msg91.com) → API Keys           |
+| SMS Provider | Optional (defaults to `SMS_PROVIDER="none"`)       |
 
 ## Database Setup
 

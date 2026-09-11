@@ -63,7 +63,13 @@ export function CompleteKycCard({ kycProgress, isProfileComplete, onRefresh }: C
 
   return (
     <>
-      <div className="flex flex-col justify-between space-y-6 rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:border-border/80">
+      <div
+        className={`flex flex-col justify-between space-y-6 rounded-2xl p-6 shadow-sm transition-all ${
+          !isApproved && isProfileComplete && !isInReview
+            ? "border-2 border-primary/50 bg-primary/[0.03] shadow-primary/5"
+            : "border border-border bg-card hover:border-border/80"
+        }`}
+      >
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -75,7 +81,14 @@ export function CompleteKycCard({ kycProgress, isProfileComplete, onRefresh }: C
                 <p className="text-xs text-muted-foreground">Identity & license audit</p>
               </div>
             </div>
-            <StatusBadge status={badgeStatus} />
+            <div className="flex items-center gap-2">
+              {!isApproved && isProfileComplete && !isInReview && (
+                <span className="hidden sm:inline-flex items-center rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-bold text-primary border border-primary/30">
+                  Action Required
+                </span>
+              )}
+              <StatusBadge status={badgeStatus} />
+            </div>
           </div>
 
           {/* Workflow Sequence Steps */}

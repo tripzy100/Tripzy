@@ -1,26 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertCircle, CheckCircle2, Info, X } from "lucide-react";
 import { AuthProvider } from "@/providers/auth-provider";
 
-// 1. TanStack Query Configuration
-const createQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 1000 * 60 * 5, // 5 minutes
-        gcTime: 1000 * 60 * 10, // 10 minutes
-        retry: 1,
-        refetchOnWindowFocus: false,
-      },
-    },
-  });
-
-// 2. Toast Type Definitions
+// 1. Toast Type Definitions
 type ToastType = "success" | "error" | "info";
 
 interface Toast {
@@ -43,9 +29,8 @@ export function useToast() {
   return context;
 }
 
-// 3. Main Provider Component
+// 2. Main Provider Component
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [queryClient] = React.useState(createQueryClient);
   const [toasts, setToasts] = React.useState<Toast[]>([]);
 
   const showToast = React.useCallback((message: string, type: ToastType = "info") => {
@@ -62,44 +47,42 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <NextThemesProvider attribute="class" defaultTheme="dark" enableSystem>
-        <ToastContext.Provider value={{ showToast }}>
-          <AuthProvider>{children}</AuthProvider>
+    <NextThemesProvider attribute="class" defaultTheme="light" enableSystem={false}>
+      <ToastContext.Provider value={{ showToast }}>
+        <AuthProvider>{children}</AuthProvider>
 
-          {/* Toast Container Overlay */}
-          <div className="fixed bottom-4 right-4 z-50 flex w-full max-w-sm flex-col gap-2">
-            <AnimatePresence>
-              {toasts.map((toast) => (
-                <motion.div
-                  key={toast.id}
-                  layout
-                  initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-                  className="glassmorphism flex items-start gap-3 rounded-lg p-4 shadow-lg"
+        {/* Toast Container Overlay */}
+        <div className="fixed bottom-4 right-4 z-50 flex w-full max-w-sm flex-col gap-2">
+          <AnimatePresence>
+            {toasts.map((toast) => (
+              <motion.div
+                key={toast.id}
+                layout
+                initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+                className="glassmorphism flex items-start gap-3 rounded-lg p-4 shadow-lg"
+              >
+                <div className="mt-0.5">
+                  {toast.type === "success" && (
+                    <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                  )}
+                  {toast.type === "error" && <AlertCircle className="h-5 w-5 text-destructive" />}
+                  {toast.type === "info" && <Info className="h-5 w-5 text-blue-500" />}
+                </div>
+                <div className="flex-1 text-sm font-medium text-foreground">{toast.message}</div>
+                <button
+                  onClick={() => removeToast(toast.id)}
+                  className="rounded p-0.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  aria-label="Dismiss notification"
                 >
-                  <div className="mt-0.5">
-                    {toast.type === "success" && (
-                      <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-                    )}
-                    {toast.type === "error" && <AlertCircle className="h-5 w-5 text-destructive" />}
-                    {toast.type === "info" && <Info className="h-5 w-5 text-blue-500" />}
-                  </div>
-                  <div className="flex-1 text-sm font-medium text-foreground">{toast.message}</div>
-                  <button
-                    onClick={() => removeToast(toast.id)}
-                    className="rounded p-0.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                    aria-label="Dismiss notification"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-        </ToastContext.Provider>
-      </NextThemesProvider>
-    </QueryClientProvider>
+                  <X className="h-4 w-4" />
+                </button>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+      </ToastContext.Provider>
+    </NextThemesProvider>
   );
 }

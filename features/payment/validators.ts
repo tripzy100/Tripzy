@@ -3,7 +3,7 @@ import { z } from "zod";
 export const checkoutRequestSchema = z.object({
   bookingId: z.string().uuid("Booking ID must be a valid UUID"),
   promoCode: z.string().optional(),
-  paymentMethod: z.enum(["UPI", "CREDIT_CARD", "DEBIT_CARD", "NET_BANKING", "WALLET"]),
+  paymentMethod: z.enum(["UPI", "CREDIT_CARD", "DEBIT_CARD", "NET_BANKING", "COD"]),
 });
 
 export type CheckoutRequestValues = z.infer<typeof checkoutRequestSchema>;

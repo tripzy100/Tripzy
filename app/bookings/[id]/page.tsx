@@ -1,5 +1,6 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { db } from "@/lib/db";
+import { getCurrentUserId } from "@/lib/supabase";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { BookingDetailView } from "@/features/booking/components/booking-detail-view";
@@ -14,8 +15,13 @@ interface PageProps {
 
 export default async function BookingPage({ params }: PageProps) {
   const resolvedParams = await params;
+  const userId = await getCurrentUserId();
 
-  // Retrieve details including vehicle specs and pricing
+  if (!userId) {
+    redirect("/auth/login?redirect=/bookings/" + resolvedParams.id);
+  }
+
+  // Retrieve booking details with ownership authorization check
   const booking = await db.booking.findUnique({
     where: { id: resolvedParams.id },
     include: {
@@ -33,6 +39,27 @@ export default async function BookingPage({ params }: PageProps) {
 
   if (!booking) {
     notFound();
+  }
+
+  // Ownership Guard: User must own the booking (or be an admin)
+  if (booking.userId !== userId) {
+    // Check if user has ADMIN role
+    const userRoleRecord = await db.user.findUnique({
+      where: { id: userId },
+      include: {
+        userRoles: {
+          include: {
+            role: true,
+          },
+        },
+      },
+    });
+
+    const isAdmin = userRoleRecord?.userRoles.some((ur) => ur.role.code === "ADMIN");
+
+    if (!isAdmin) {
+      notFound(); // Hide existence of another user's booking
+    }
   }
 
   return (

@@ -109,7 +109,7 @@ function LoginContent() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6">
+    <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-6 py-10 pb-28 sm:py-12 sm:pb-16">
       <div className="w-full max-w-sm space-y-8">
         <Link href="/" className="flex items-center justify-center gap-2">
           <Car className="h-8 w-8 text-foreground" />

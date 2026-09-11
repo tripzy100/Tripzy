@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Car, User, Mail, Lock, CheckCircle, ArrowRight, Loader2 } from "lucide-react";
+import { Car, User, Mail, Lock, CheckCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { OtpInput } from "@/components/auth/otp-input";
 import { useToast } from "@/providers/app-provider";
@@ -123,7 +123,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6 py-12">
+    <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-6 py-10 pb-28 sm:py-12 sm:pb-16">
       <div className="w-full max-w-sm space-y-8">
         <Link href="/" className="flex items-center justify-center gap-2">
           <Car className="h-8 w-8 text-foreground" />
@@ -211,7 +211,7 @@ export default function RegisterPage() {
                   </div>
 
                   <Button type="submit" className="w-full mt-2" isLoading={loading}>
-                    Register & Send Code <ArrowRight className="ml-2 h-4 w-4" />
+                    Register
                   </Button>
                 </form>
               </motion.div>

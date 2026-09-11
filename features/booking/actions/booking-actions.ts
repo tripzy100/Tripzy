@@ -7,93 +7,58 @@ import {
   ExtensionRequestValues,
   CancellationRequestValues,
 } from "../validators";
-import { checkVehicleAvailability, isValidBusinessHours } from "../services/availability-engine";
+import { checkVehicleAvailability } from "../services/availability-engine";
+import { createBookingHold, confirmBookingAuthoritative } from "@/lib/services/booking-service";
+import { requireAuth } from "@/lib/auth-utils";
 
 export async function createDraftBooking(values: BookingRequestValues) {
-  if (!isValidBusinessHours(values.pickupDate, values.returnDate)) {
-    return { success: false, error: "Timings must fall within 7AM-11PM" };
-  }
-
-  const available = await checkVehicleAvailability(
-    values.vehicleId,
-    values.pickupDate,
-    values.returnDate,
-  );
-  if (!available) {
-    return { success: false, error: "Vehicle is unavailable for this date window" };
-  }
-
   try {
-    const result = await db.$transaction(async (tx) => {
-      const mockUser = await tx.user.findFirst();
-      if (!mockUser) throw new Error("No users found");
+    const userId = await requireAuth();
 
-      const book = await tx.booking.create({
-        data: {
-          bookingNumber: "BK-" + Math.floor(100000 + Math.random() * 900000),
-          userId: mockUser.id,
-          vehicleId: values.vehicleId,
-          pickupLocationId: values.pickupBranchId,
-          dropLocationId: values.dropBranchId,
-          pickupDate: values.pickupDate,
-          returnDate: values.returnDate,
-          status: BookingStatus.PENDING,
-          totalAmount: 3000,
-          taxAmount: 540,
-          finalAmount: 3540,
-          securityDeposit: 5000,
-        },
-      });
-
-      await tx.bookingTimeline.create({
-        data: {
-          bookingId: book.id,
-          statusChangedTo: BookingStatus.PENDING,
-          remarks: "Draft reservation created",
-          actionBy: mockUser.id,
-        },
-      });
-
-      return book;
+    const result = await createBookingHold({
+      userId,
+      vehicleId: values.vehicleId,
+      pickupLocationId: values.pickupBranchId,
+      dropLocationId: values.dropBranchId,
+      pickupDate: values.pickupDate,
+      returnDate: values.returnDate,
     });
 
-    return { success: true, bookingId: result.id };
-  } catch (err) {
-    return { success: false, error: "Failed to allocate reservation" };
+    if (!result.success) {
+      return { success: false, error: result.error };
+    }
+
+    return { success: true, bookingId: result.booking!.id };
+  } catch (error: any) {
+    if (error.message === "UNAUTHORIZED") {
+      return { success: false, error: "Please log in to create a reservation." };
+    }
+    return { success: false, error: "Failed to allocate reservation hold." };
   }
 }
 
 export async function confirmBooking(id: string) {
   try {
-    const book = await db.booking.findUnique({ where: { id } });
-    if (!book) return { success: false, error: "Booking not found" };
-
-    await db.$transaction(async (tx) => {
-      await tx.booking.update({
-        where: { id },
-        data: { status: BookingStatus.CONFIRMED },
-      });
-
-      await tx.bookingTimeline.create({
-        data: {
-          bookingId: id,
-          statusChangedTo: BookingStatus.CONFIRMED,
-          remarks: "Reservation finalized successfully",
-          actionBy: book.userId,
-        },
-      });
-    });
-
-    return { success: true };
-  } catch (error) {
+    const userId = await requireAuth();
+    return await confirmBookingAuthoritative(id, userId);
+  } catch (error: any) {
+    if (error.message === "UNAUTHORIZED") {
+      return { success: false, error: "Unauthorized session." };
+    }
     return { success: false, error: "Failed to confirm reservation" };
   }
 }
 
 export async function requestExtension(values: ExtensionRequestValues) {
   try {
+    const userId = await requireAuth();
+
     const book = await db.booking.findUnique({ where: { id: values.bookingId } });
     if (!book) return { success: false, error: "Booking not found" };
+
+    if (book.userId !== userId) {
+      return { success: false, error: "Unauthorized access to booking" };
+    }
 
     const currentEnd = new Date(book.returnDate);
     const nextEnd = new Date(currentEnd.getTime() + values.extraDays * 24 * 60 * 60 * 1000);
@@ -120,21 +85,30 @@ export async function requestExtension(values: ExtensionRequestValues) {
           bookingId: values.bookingId,
           statusChangedTo: book.status,
           remarks: `Extension of ${values.extraDays} days approved`,
-          actionBy: book.userId,
+          actionBy: userId,
         },
       });
     });
 
     return { success: true };
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === "UNAUTHORIZED") {
+      return { success: false, error: "Unauthorized session." };
+    }
     return { success: false, error: "Extension request failed" };
   }
 }
 
 export async function cancelBooking(values: CancellationRequestValues) {
   try {
+    const userId = await requireAuth();
+
     const book = await db.booking.findUnique({ where: { id: values.bookingId } });
     if (!book) return { success: false, error: "Booking not found" };
+
+    if (book.userId !== userId) {
+      return { success: false, error: "Unauthorized access to booking" };
+    }
 
     await db.$transaction(async (tx) => {
       await tx.booking.update({
@@ -147,13 +121,17 @@ export async function cancelBooking(values: CancellationRequestValues) {
           bookingId: values.bookingId,
           statusChangedTo: BookingStatus.CANCELLED,
           remarks: `Cancelled. Reason: ${values.reason}`,
-          actionBy: book.userId,
+          actionBy: userId,
         },
       });
     });
 
     return { success: true };
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === "UNAUTHORIZED") {
+      return { success: false, error: "Unauthorized session." };
+    }
     return { success: false, error: "Cancellation failed" };
   }
 }
+

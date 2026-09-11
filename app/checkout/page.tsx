@@ -13,14 +13,18 @@ interface CheckoutPageProps {
     pickupLocationId?: string;
     dropLocationId?: string;
     pickupDate?: string;
+    pickupTime?: string;
     returnDate?: string;
+    returnTime?: string;
   }>;
 }
 
 export default async function CheckoutPage({ searchParams }: CheckoutPageProps) {
   const params = await searchParams;
 
-  const destUrl = `/checkout?vehicleId=${params.vehicleId || ""}&pickupLocationId=${params.pickupLocationId || ""}&dropLocationId=${params.dropLocationId || ""}&pickupDate=${params.pickupDate || ""}&returnDate=${params.returnDate || ""}`;
+  const { vehicleId, pickupLocationId, dropLocationId, pickupDate, pickupTime, returnDate, returnTime } = params;
+
+  const destUrl = `/checkout?vehicleId=${vehicleId || ""}&pickupLocationId=${pickupLocationId || ""}&dropLocationId=${dropLocationId || ""}&pickupDate=${pickupDate || ""}&pickupTime=${pickupTime || ""}&returnDate=${returnDate || ""}&returnTime=${returnTime || ""}`;
 
   // 1. Authentication Guard
   const userId = await getCurrentUserId();
@@ -77,29 +81,33 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
     redirect("/dashboard/kyc?reason=kyc_required_for_payment");
   }
 
-  const { vehicleId, pickupLocationId, dropLocationId, pickupDate, returnDate } = params;
-
   if (!vehicleId || !pickupLocationId || !dropLocationId || !pickupDate || !returnDate) {
     redirect("/cars");
   }
 
-  const [vehicle, pickupLoc, dropLoc] = await Promise.all([
+  const [vehicle, pickupLoc, dropLoc, allPickups, allDrops] = await Promise.all([
     db.vehicle.findUnique({
       where: { id: vehicleId },
       include: { brand: true, model: true, pricings: true },
     }),
     db.pickupLocation.findUnique({ where: { id: pickupLocationId } }),
     db.dropLocation.findUnique({ where: { id: dropLocationId } }),
+    db.pickupLocation.findMany({ select: { id: true, name: true, address: true } }),
+    db.dropLocation.findMany({ select: { id: true, name: true, address: true } }),
   ]);
 
   if (!vehicle || !pickupLoc || !dropLoc) {
     redirect("/cars");
   }
 
+  // Format full pickupDate and returnDate with times if pickupTime/returnTime are present
+  const fullPickupDate = pickupTime && !pickupDate.includes("T") ? `${pickupDate}T${pickupTime}` : pickupDate;
+  const fullReturnDate = returnTime && !returnDate.includes("T") ? `${returnDate}T${returnTime}` : returnDate;
+
   return (
     <>
       <Header />
-      <main className="mx-auto max-w-5xl px-6 py-12">
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <CheckoutWizard
           user={{
             id: user.id,
@@ -111,8 +119,10 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
           vehicle={vehicle as any}
           pickupLocation={pickupLoc as any}
           dropLocation={dropLoc as any}
-          pickupDate={pickupDate}
-          returnDate={returnDate}
+          pickupDate={fullPickupDate}
+          returnDate={fullReturnDate}
+          allPickupLocations={allPickups}
+          allDropLocations={allDrops}
         />
       </main>
       <Footer />

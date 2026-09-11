@@ -3,9 +3,10 @@ import { InvoiceStatus } from "@prisma/client";
 
 /**
  * Generates an Invoice record in PostgreSQL for a completed booking transaction.
+ * Accepts an optional Prisma transaction client (`dbClient`) to ensure atomic rollback.
  */
-export async function createInvoice(bookingId: string, discount = 0) {
-  const booking = await db.booking.findUnique({
+export async function createInvoice(bookingId: string, discount = 0, dbClient: any = db) {
+  const booking = await dbClient.booking.findUnique({
     where: { id: bookingId },
   });
 
@@ -17,7 +18,7 @@ export async function createInvoice(bookingId: string, discount = 0) {
 
   const invoiceNumber = `INV-${Date.now().toString().slice(-6)}-${booking.bookingNumber}`;
 
-  const invoice = await db.invoice.create({
+  const invoice = await dbClient.invoice.create({
     data: {
       invoiceNumber,
       bookingId,

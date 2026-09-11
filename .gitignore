@@ -79,6 +79,7 @@ prisma/migrations/
 .eslintcache
 *.tgz
 .cache/
+scratch/
 
 # ========================
 # Sentry / Error Tracking

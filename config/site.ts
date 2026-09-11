@@ -54,12 +54,21 @@ export const siteConfig = {
     },
     contactPoint: {
       telephone: "+91-9234273063",
+      displayPhone: "+91 92342 73063",
+      rawPhone: "+919234273063",
+      whatsappUrl: "https://wa.me/919234273063",
       contactType: "customer support",
       areaServed: "IN",
       availableLanguage: ["en", "hi"],
     },
     openingHours: "Mo-Su 06:00-23:00",
     priceRange: "₹₹",
+  },
+  contact: {
+    phone: "+91 92342 73063",
+    phoneCompact: "92342 73063",
+    phoneRaw: "+919234273063",
+    whatsappUrl: "https://wa.me/919234273063",
   },
 };
 

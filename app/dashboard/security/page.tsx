@@ -21,8 +21,7 @@ export default function SecurityDashboardPage() {
 
   const handleDownloadReport = async () => {
     setExporting(true);
-    // Since we mock the logged-in user in database, pass a mock UUID check or retrieve first user ID
-    const res = await getGdprDataReport("mock-user-id");
+    const res = await getGdprDataReport();
     setExporting(false);
 
     if (res.success) {

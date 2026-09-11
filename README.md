@@ -17,7 +17,7 @@
 | **Payments**     | Cashfree (sandbox / production)                             |
 | **Media**        | Cloudinary (image upload & CDN)                             |
 | **Maps**         | Google Maps API                                             |
-| **Email/SMS**    | Resend / MSG91                                              |
+| **Email/SMS**    | Resend (Email) / Optional SMS Provider                      |
 | **Hosting**      | Vercel (Production + Preview)                               |
 | **CDN**          | Cloudflare                                                  |
 | **CI/CD**        | GitHub Actions                                              |

@@ -2,21 +2,37 @@
 
 import { db } from "@/lib/db";
 import { UserStatus } from "@prisma/client";
+import { requireAdmin } from "@/lib/auth-utils";
 
 /**
  * Server Action to verify or reject customer KYC status.
+ * Requires authenticated user with ADMIN role.
  */
 export async function verifyUserKyc(userId: string, approve: boolean) {
   try {
+    const adminId = await requireAdmin();
+
     const user = await db.user.findUnique({ where: { id: userId } });
     if (!user) return { success: false, error: "User not found" };
 
-    await db.user.update({
-      where: { id: userId },
-      data: {
-        isKycVerified: approve,
-        status: approve ? UserStatus.ACTIVE : UserStatus.SUSPENDED,
-      },
+    await db.$transaction(async (tx) => {
+      await tx.user.update({
+        where: { id: userId },
+        data: {
+          isKycVerified: approve,
+          status: approve ? UserStatus.ACTIVE : UserStatus.SUSPENDED,
+        },
+      });
+
+      await tx.adminAction.create({
+        data: {
+          adminId,
+          actionType: approve ? "KYC_APPROVE" : "KYC_REJECT",
+          description: `${approve ? "Approved" : "Rejected"} KYC for user ${userId}`,
+          targetEntity: "User",
+          targetId: userId,
+        },
+      });
     });
 
     return { success: true };
@@ -28,16 +44,15 @@ export type VerifyUserKycType = typeof verifyUserKyc;
 
 /**
  * Logs a high-security impersonation action to PostgreSQL.
+ * Requires authenticated user with ADMIN role.
  */
 export async function triggerImpersonationLog(userId: string) {
   try {
-    // Lookup first user as mock admin executor coordinates
-    const admin = await db.user.findFirst();
-    if (!admin) return { success: false, error: "Executor session missing" };
+    const adminId = await requireAdmin();
 
     await db.adminAction.create({
       data: {
-        adminId: admin.id,
+        adminId,
         actionType: "IMPERSONATION_START",
         description: `Began administrative user impersonation of account ${userId}`,
         targetEntity: "User",
@@ -51,3 +66,4 @@ export async function triggerImpersonationLog(userId: string) {
   }
 }
 export type TriggerImpersonationLogType = typeof triggerImpersonationLog;
+

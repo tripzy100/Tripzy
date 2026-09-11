@@ -16,6 +16,8 @@ const displayFont = Outfit({
   display: "swap",
 });
 
+import { WhatsAppFloatingButton } from "@/components/layout/whatsapp-button";
+
 export const metadata: Metadata = constructMetadata();
 
 export default function RootLayout({
@@ -28,7 +30,10 @@ export default function RootLayout({
       <body
         className={`${sansFont.variable} ${displayFont.variable} bg-background text-foreground antialiased app-bg`}
       >
-        <AppProvider>{children}</AppProvider>
+        <AppProvider>
+          {children}
+          <WhatsAppFloatingButton />
+        </AppProvider>
       </body>
     </html>
   );

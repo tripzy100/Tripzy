@@ -12,8 +12,8 @@ export async function POST(request: Request) {
     }
 
     const session = await createPaymentSession(result.data);
-    if (!session.success) {
-      return NextResponse.json({ error: session.error }, { status: 400 });
+    if (!session || !session.success) {
+      return NextResponse.json({ error: session?.error || "Payment session generation failed" }, { status: 400 });
     }
 
     return NextResponse.json(session);

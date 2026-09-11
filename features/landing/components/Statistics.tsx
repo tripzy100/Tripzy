@@ -1,7 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
-
 const stats = [
   { label: "Self drive trips completed", value: "500+" },
   { label: "Cars available for rent", value: "20+" },

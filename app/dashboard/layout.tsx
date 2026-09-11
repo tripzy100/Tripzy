@@ -114,14 +114,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Main Content Area */}
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Mobile Header Bar */}
-        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-card px-6 py-4 lg:hidden">
+        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-card px-4 sm:px-6 py-3.5 sm:py-4 lg:hidden">
           <Link href="/" className="flex items-center gap-2">
             <Car className="h-5 w-5 text-foreground" />
             <span className="font-display font-bold text-foreground">TRIPZY</span>
           </Link>
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
             aria-label="Toggle menu"
           >
             <Menu className="h-5 w-5" />
@@ -130,7 +130,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Mobile Navigation Panel */}
         {mobileOpen && (
-          <nav className="space-y-2 border-b border-border bg-card px-6 py-4 lg:hidden">
+          <nav className="space-y-1.5 border-b border-border bg-card px-4 sm:px-6 py-4 lg:hidden">
             {navItems.map((item) => {
               const Icon = item.icon;
               return (
@@ -138,7 +138,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   key={item.href}
                   href={item.href}
                   onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-3 rounded px-3 py-2 text-sm text-foreground/80 hover:bg-muted"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-foreground/80 hover:bg-muted"
                 >
                   <Icon className="h-4.5 w-4.5 text-muted-foreground" /> {item.label}
                 </Link>
@@ -147,7 +147,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <button
               onClick={handleSignOut}
               disabled={signingOut}
-              className="flex w-full items-center gap-3 rounded px-3 py-2 text-sm text-destructive hover:bg-destructive/10"
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-destructive hover:bg-destructive/10"
             >
               {signingOut ? (
                 <Loader2 className="h-4.5 w-4.5 animate-spin" />
@@ -160,7 +160,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         )}
 
         {/* Dynamic page children */}
-        <main className="mx-auto w-full max-w-6xl flex-1 p-6 md:p-8 lg:p-10">{children}</main>
+        <main className="mx-auto w-full max-w-6xl flex-1 p-4 sm:p-6 md:p-8 lg:p-10">{children}</main>
       </div>
     </div>
   );

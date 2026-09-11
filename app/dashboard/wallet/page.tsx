@@ -1,10 +1,14 @@
 import { db } from "@/lib/db";
 import { Wallet, ArrowDownLeft, ArrowUpRight, TrendingUp } from "lucide-react";
+import { requireAuthPage } from "@/lib/auth-utils";
 
 export const dynamic = "force-dynamic";
 
 export default async function WalletPage() {
-  const user = await db.user.findFirst({
+  const userId = await requireAuthPage("/dashboard/wallet");
+
+  const user = await db.user.findUnique({
+    where: { id: userId },
     include: {
       wallet: {
         include: {
@@ -15,7 +19,7 @@ export default async function WalletPage() {
   });
 
   if (!user) {
-    return <div className="text-sm text-muted-foreground">Session expired. Please seed.</div>;
+    return <div className="text-sm text-muted-foreground">User account not found. Please log in again.</div>;
   }
 
   const wallet = user.wallet;

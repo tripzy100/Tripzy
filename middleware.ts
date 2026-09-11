@@ -43,7 +43,12 @@ export async function middleware(request: NextRequest) {
   }
 
   // 2. Authentication & RBAC
-  const isStaticAsset = pathname.startsWith("/_next") || pathname.startsWith("/favicon");
+  const isStaticAsset =
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/favicon") ||
+    pathname.startsWith("/hero") ||
+    pathname.startsWith("/cars") ||
+    /\.(jpg|jpeg|png|webp|svg|gif|ico|avif)$/i.test(pathname);
   const isPublic = PUBLIC_ROUTES.some(
     (route) => pathname === route || pathname.startsWith(route + "/"),
   );
@@ -63,7 +68,7 @@ export async function middleware(request: NextRequest) {
   // Extract role from user metadata (set during registration)
   const role = user?.user_metadata?.role || "USER";
 
-  if (!user && !isPublic && !pathname.startsWith("/api/auth")) {
+  if (!user && !isPublic && !pathname.startsWith("/api")) {
     const loginUrl = new URL("/auth/login", request.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);

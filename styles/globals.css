@@ -4,148 +4,164 @@
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    /* Primary Light Theme: Warm Luxury Canvas & Deep Navy/Near-Black */
+    --background: 40 12% 98%;
+    --foreground: 222 47% 11%;
 
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
 
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 250 89% 65%;
-    --primary-foreground: 0 0% 98%;
+    /* Distinctive Automotive Accent: Tripzy Orange / Amber */
+    --primary: 38 92% 50%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
 
-    --accent: 250 20% 15%;
-    --accent-foreground: 250 89% 80%;
+    --accent: 38 30% 95%;
+    --accent-foreground: 38 92% 40%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 250 89% 65%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 38 92% 50%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
     --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --font-display: "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    
+    /* Safe Area Variables */
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sat: env(safe-area-inset-top, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+    --sar: env(safe-area-inset-right, 0px);
   }
 
-  .light {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+  .dark {
+    /* Dark Mode: Deep Executive Graphite & Warm Amber */
+    --background: 220 20% 9%;
+    --foreground: 40 15% 96%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card: 220 18% 12%;
+    --card-foreground: 40 15% 96%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover: 220 18% 12%;
+    --popover-foreground: 40 15% 96%;
 
-    --primary: 250 84% 54%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 38 92% 50%;
+    --primary-foreground: 220 25% 8%;
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary: 220 14% 17%;
+    --secondary-foreground: 40 15% 96%;
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted: 220 14% 16%;
+    --muted-foreground: 220 10% 64%;
 
-    --accent: 250 30% 95%;
-    --accent-foreground: 250 84% 40%;
+    --accent: 220 14% 18%;
+    --accent-foreground: 38 92% 60%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 72% 45%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 250 84% 54%;
+    --border: 220 14% 19%;
+    --input: 220 14% 19%;
+    --ring: 38 92% 50%;
   }
 }
 
 @layer base {
-  * {
+  *,
+  *::before,
+  *::after {
     @apply border-border;
+    box-sizing: border-box;
+  }
+
+  html {
+    overflow-x: clip;
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
   }
 
   body {
     @apply bg-background font-sans text-foreground antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    min-width: 320px;
+    overflow-x: clip;
+    width: 100%;
   }
 
-  /* Custom high-performance focus outline */
+  /* Accessible high-contrast focus outline */
   :focus-visible {
     outline: 2px solid hsl(var(--ring));
     outline-offset: 2px;
   }
 }
 
-/* Premium utilities and micro-animations */
+/* Premium Automotive Design System Utilities */
 @layer utilities {
 
-  /* Page background (minimal, premium, works for both light/dark) */
+  /* Clean background treatment without artificial purple/blue SaaS gradients */
   .app-bg {
-    background-image:
-      radial-gradient(1000px 650px at 20% -10%, rgba(129, 140, 248, 0.25), rgba(129, 140, 248, 0) 55%),
-      radial-gradient(900px 600px at 90% 10%, rgba(37, 211, 102, 0.2), rgba(37, 211, 102, 0) 52%),
-      linear-gradient(to bottom, rgba(15, 23, 42, 0), rgba(15, 23, 42, 0.35));
+    background-color: hsl(var(--background));
+    background-image: radial-gradient(at 50% 0%, rgba(217, 131, 23, 0.04) 0px, transparent 60%);
   }
 
-  .light .app-bg {
-    background-image:
-      radial-gradient(900px 600px at 15% 0%, rgba(79, 70, 229, 0.12), rgba(79, 70, 229, 0) 55%),
-      radial-gradient(900px 600px at 95% 10%, rgba(37, 211, 102, 0.1), rgba(37, 211, 102, 0) 50%),
-      linear-gradient(to bottom, rgba(15, 23, 42, 0), rgba(15, 23, 42, 0.05));
+  .dark .app-bg {
+    background-color: hsl(var(--background));
+    background-image: radial-gradient(at 50% 0%, rgba(217, 131, 23, 0.06) 0px, transparent 60%);
   }
 
-  .glassmorphism {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+  /* Restrained Card Surface */
+  .card-surface {
+    background-color: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
-  .light .glassmorphism {
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(0, 0, 0, 0.06);
+  .card-surface:hover {
+    border-color: hsl(var(--border) / 0.8);
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.2);
   }
 
+  /* Editorial Metallic Display Gradient */
   .text-gradient {
-    background: linear-gradient(135deg, #ffffff 30%, #818cf8 100%);
+    background: linear-gradient(135deg, hsl(var(--foreground)) 60%, hsl(var(--muted-foreground)) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
-  .light .text-gradient {
-    background: linear-gradient(135deg, #0f172a 30%, #4f46e5 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
+  /* Shimmer Loading state */
   .shimmer {
-    background: linear-gradient(90deg,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.05) 20%,
-        rgba(255, 255, 255, 0.1) 60%,
-        rgba(255, 255, 255, 0) 100%);
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.04) 20%,
+      rgba(255, 255, 255, 0.08) 60%,
+      rgba(255, 255, 255, 0) 100%
+    );
     background-size: 200% 100%;
     animation: shimmer-anim 1.5s infinite;
   }
 
   .light .shimmer {
-    background: linear-gradient(90deg,
-        rgba(0, 0, 0, 0) 0%,
-        rgba(0, 0, 0, 0.02) 20%,
-        rgba(0, 0, 0, 0.05) 60%,
-        rgba(0, 0, 0, 0) 100%);
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.03) 20%,
+      rgba(0, 0, 0, 0.06) 60%,
+      rgba(0, 0, 0, 0) 100%
+    );
     background-size: 200% 100%;
     animation: shimmer-anim 1.5s infinite;
   }
@@ -155,13 +171,12 @@
   0% {
     background-position: 200% 0;
   }
-
   100% {
     background-position: -200% 0;
   }
 }
 
-/* Custom premium scrollbars */
+/* Custom scrollbars */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;

@@ -3,8 +3,21 @@
 import * as React from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Moon, Sun, Phone } from "lucide-react";
+import {
+  X,
+  Moon,
+  Sun,
+  Phone,
+  Car,
+  MapPin,
+  Plane,
+  Compass,
+  HelpCircle,
+  User,
+  Calendar,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { siteConfig } from "@/config/site";
 
 interface MobileDrawerProps {
   isOpen: boolean;
@@ -23,6 +36,15 @@ export function MobileDrawer({ isOpen, onClose, theme, toggleTheme }: MobileDraw
     };
   }, [isOpen]);
 
+  const navLinks = [
+    { href: "/cars", label: "Browse Cars", icon: Car, desc: "Verified self-drive fleet" },
+    { href: "/cities", label: "Pickup Locations", icon: MapPin, desc: "Hubs across Ranchi" },
+    { href: "/airports", label: "Airport Rentals", icon: Plane, desc: "Birsa Munda Airport" },
+    { href: "/packages", label: "Packages & Outstation", icon: Compass, desc: "Multi-day road trips" },
+    { href: "/dashboard", label: "My Bookings", icon: Calendar, desc: "Manage active trips" },
+    { href: "/support", label: "24/7 Support & FAQs", icon: HelpCircle, desc: "Assistance & roadside help" },
+  ];
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -33,7 +55,7 @@ export function MobileDrawer({ isOpen, onClose, theme, toggleTheme }: MobileDraw
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40"
           />
 
           {/* Drawer container */}
@@ -42,75 +64,102 @@ export function MobileDrawer({ isOpen, onClose, theme, toggleTheme }: MobileDraw
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed bottom-0 right-0 top-0 flex w-full max-w-sm flex-col border-l border-border bg-background p-6 shadow-2xl"
+            className="fixed bottom-0 right-0 top-0 z-50 flex w-full max-w-xs sm:max-w-sm flex-col border-l border-border bg-background text-foreground p-5 sm:p-6 shadow-2xl overflow-y-auto"
           >
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-border pb-4">
-              <span className="font-display font-bold text-foreground">Menu</span>
+            <div className="flex items-center justify-between border-b border-border/70 pb-4">
+              <Link href="/" onClick={onClose} className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                  <Car className="h-4.5 w-4.5 stroke-[2.2]" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-display font-black text-base tracking-tight text-foreground leading-none">
+                    TRIPZY
+                  </span>
+                  <span className="text-[8px] font-bold uppercase tracking-wider text-primary leading-none mt-0.5">
+                    Self Drive Rentals
+                  </span>
+                </div>
+              </Link>
               <button
                 onClick={onClose}
-                className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
                 aria-label="Close drawer"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            {/* Main Content Area (Aligned to the Top) */}
-            <div className="flex-1 py-8 space-y-8">
-              {/* Links */}
-              <nav>
-                <ul className="space-y-6">
-                  <li>
+            {/* Quick Auth Actions */}
+            <div className="grid grid-cols-2 gap-2 pt-4">
+              <Link href="/auth/login" className="w-full" onClick={onClose}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full font-bold text-xs h-9 rounded-xl flex items-center justify-center gap-1.5"
+                >
+                  <User className="h-3.5 w-3.5" />
+                  <span>Sign In</span>
+                </Button>
+              </Link>
+              <Link href="/auth/register" className="w-full" onClick={onClose}>
+                <Button
+                  size="sm"
+                  className="w-full font-bold text-xs h-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center gap-1.5 shadow-xs"
+                >
+                  <User className="h-3.5 w-3.5" />
+                  <span>Sign Up</span>
+                </Button>
+              </Link>
+            </div>
+
+            {/* Main Navigation Links */}
+            <div className="flex-1 py-5 space-y-2">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground px-1">
+                Explore & Travel
+              </span>
+              <nav className="space-y-1 pt-1">
+                {navLinks.map((item) => {
+                  const Icon = item.icon;
+                  return (
                     <Link
-                      href="/#cars"
+                      key={item.href}
+                      href={item.href}
                       onClick={onClose}
-                      className="block font-display text-lg font-medium text-foreground hover:text-muted-foreground"
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-foreground transition-colors hover:bg-muted/80 hover:text-primary group"
                     >
-                      Browse Cars
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                        <Icon className="h-4 w-4 stroke-[2]" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-semibold leading-tight">{item.label}</span>
+                        <span className="text-[11px] text-muted-foreground leading-tight">{item.desc}</span>
+                      </div>
                     </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/packages"
-                      onClick={onClose}
-                      className="block font-display text-lg font-medium text-foreground hover:text-muted-foreground"
-                    >
-                      Packages & Plans
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/support"
-                      onClick={onClose}
-                      className="block font-display text-lg font-medium text-foreground hover:text-muted-foreground"
-                    >
-                      Get Support
-                    </Link>
-                  </li>
-                </ul>
+                  );
+                })}
               </nav>
 
-              {/* Actions */}
-              <div className="space-y-4 border-t border-border pt-6">
+              {/* Instant CTAs */}
+              <div className="space-y-2.5 border-t border-border/70 pt-4 mt-4">
                 <a
-                  href="tel:+919234273063"
-                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#25D366] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#1da851]"
+                  href={`tel:${siteConfig.contact.phoneRaw}`}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-amber-500/15 border border-amber-500/30 px-4 py-2.5 text-xs font-bold text-amber-600 dark:text-amber-400 transition-colors hover:bg-amber-500/25"
                   onClick={onClose}
                 >
-                  <Phone className="h-4 w-4" />
-                  <span>Call Now: +91 92342 73063</span>
+                  <Phone className="h-4 w-4 stroke-[2.2]" />
+                  <span>Call Us: {siteConfig.contact.phone}</span>
                 </a>
 
                 <a
-                  href="https://wa.me/919234273063"
+                  href={siteConfig.contact.whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm font-semibold text-[#25D366] transition-colors hover:bg-green-500/20 hover:text-[#25D366]/80"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 transition-colors hover:bg-emerald-500/20"
                   onClick={onClose}
                 >
                   <svg
-                    className="h-5 w-5 fill-[#25D366]"
+                    className="h-4 w-4 fill-current text-[#25D366]"
                     viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg"
                   >
@@ -118,28 +167,29 @@ export function MobileDrawer({ isOpen, onClose, theme, toggleTheme }: MobileDraw
                   </svg>
                   <span>Chat on WhatsApp</span>
                 </a>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <Link href="/auth/login" className="w-full" onClick={onClose}>
-                    <Button variant="outline" className="w-full">
-                      Sign In
-                    </Button>
-                  </Link>
-                  <Link href="/auth/register" className="w-full" onClick={onClose}>
-                    <Button className="w-full">Sign Up</Button>
-                  </Link>
-                </div>
               </div>
             </div>
 
-            {/* Bottom Actions (Theme switcher only) */}
-            <div className="border-t border-border pt-4">
+            {/* Bottom Actions (Theme switcher) */}
+            <div className="border-t border-border/70 pt-4">
               <button
                 onClick={toggleTheme}
-                className="flex w-full items-center justify-between rounded-lg bg-muted px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted/80"
+                className="flex w-full min-h-[44px] items-center justify-between rounded-xl bg-muted/60 px-4 py-2.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted"
               >
-                <span>Change Layout Theme</span>
-                {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                <span>Theme Mode</span>
+                <span className="flex items-center gap-1.5 text-muted-foreground">
+                  {theme === "dark" ? (
+                    <>
+                      <span>Dark</span>
+                      <Moon className="h-4 w-4" />
+                    </>
+                  ) : (
+                    <>
+                      <span>Light</span>
+                      <Sun className="h-4 w-4" />
+                    </>
+                  )}
+                </span>
               </button>
             </div>
           </motion.div>

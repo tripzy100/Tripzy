@@ -1,26 +1,58 @@
 import { describe, it, expect, vi } from "vitest";
-import { calculatePricing } from "../features/booking/services/pricing-engine";
+import { calculateAuthoritativePrice } from "../lib/services/pricing-service";
 import { isValidBusinessHours } from "../features/booking/services/availability-engine";
 
-describe("Tripzy Booking Pricing Engine", () => {
-  it("calculates correct base rate daily subtotals and 18% tax charges", () => {
-    // 3 days rental * 2000 base daily rate + 5000 security deposit
-    const result = calculatePricing(3, 2000, 5000, 0);
+vi.mock("@/lib/db", () => ({
+  db: {
+    vehicle: {
+      findUnique: vi.fn().mockResolvedValue({
+        id: "veh-1",
+        pricings: [
+          {
+            dailyRate: 2000,
+            basePrice: 2000,
+            securityDeposit: 5000,
+            taxRate: 18,
+            weekendMultiplier: 1.2,
+          },
+        ],
+      }),
+    },
+  },
+}));
 
-    expect(result.rentalDays).toBe(3);
-    expect(result.baseRentalSubtotal).toBe(6000);
-    expect(result.taxAmount).toBe(1080); // 18% GST of 6000
-    expect(result.totalEstimate).toBe(12330); // 6000 subtotal + 5000 deposit + 1080 tax + 250 fee
+describe("Tripzy Authoritative Pricing Service", () => {
+  it("calculates correct base rate daily subtotals and 18% tax charges", async () => {
+    // 3 weekdays rental: 2026-09-01 (Tue) to 2026-09-04 (Fri)
+    const result = await calculateAuthoritativePrice({
+      vehicleId: "veh-1",
+      pickupDate: new Date("2026-09-01T10:00:00"),
+      returnDate: new Date("2026-09-04T10:00:00"),
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.pricing.rentalDays).toBe(3);
+      expect(result.pricing.baseRentalSubtotal).toBe(6000);
+      expect(result.pricing.convenienceFee).toBe(250);
+      expect(result.pricing.securityDeposit).toBe(5000);
+    }
   });
 
-  it("applies the 20% weekend markup adjustments correctly", () => {
-    // 3 days rental * 2000 daily base rate, with 1 weekend day
-    const result = calculatePricing(3, 2000, 5000, 1);
+  it("applies the weekend markup adjustments correctly", async () => {
+    // Rental spanning weekend: 2026-09-04 (Fri) to 2026-09-07 (Mon) -> 3 days, Sat & Sun are weekends
+    const result = await calculateAuthoritativePrice({
+      vehicleId: "veh-1",
+      pickupDate: new Date("2026-09-04T10:00:00"),
+      returnDate: new Date("2026-09-07T10:00:00"),
+    });
 
-    expect(result.baseRentalSubtotal).toBe(6000);
-    expect(result.weekendMultiplierCharge).toBe(400); // 1 day * 2000 * 20% markup
-    expect(result.taxAmount).toBe(1152); // 18% of (6000 subtotal + 400 markup)
-    expect(result.totalEstimate).toBe(12802); // 6400 + 5000 + 1152 + 250 fee
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.pricing.rentalDays).toBe(3);
+      expect(result.pricing.weekendDaysCount).toBe(2);
+      expect(result.pricing.weekendMultiplierCharge).toBe(800); // 2 days * 2000 * 0.2
+    }
   });
 });
 

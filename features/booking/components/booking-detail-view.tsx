@@ -5,7 +5,6 @@ import { Clock, ShieldAlert, Sparkles, MapPin, BadgeCheck, Ban } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/providers/app-provider";
 import { confirmBooking, cancelBooking, requestExtension } from "../actions/booking-actions";
-import { calculatePricing } from "../services/pricing-engine";
 
 interface DetailProps {
   booking: {
@@ -39,9 +38,6 @@ export function BookingDetailView({ booking }: DetailProps) {
       (booking.returnDate.getTime() - booking.pickupDate.getTime()) / (1000 * 60 * 60 * 24),
     ),
   );
-
-  const pricingBreakdown = calculatePricing(durationDays, dailyRate, deposit);
-
   React.useEffect(() => {
     if (status !== "PENDING") return;
     const timer = setInterval(() => {
@@ -94,7 +90,7 @@ export function BookingDetailView({ booking }: DetailProps) {
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 text-sm text-foreground/80">
+          <div className="grid grid-cols-1 min-[420px]:grid-cols-2 gap-4 text-sm text-foreground/80">
             <div>
               <span className="block text-xs text-muted-foreground">Vehicle</span>
               <span className="font-semibold">
@@ -103,8 +99,8 @@ export function BookingDetailView({ booking }: DetailProps) {
             </div>
             <div>
               <span className="block text-xs text-muted-foreground">City Route</span>
-              <span className="flex items-center gap-1 font-semibold">
-                <MapPin className="h-3.5 w-3.5" /> {booking.pickupLocation.name} &rarr;{" "}
+              <span className="flex items-center gap-1 font-semibold flex-wrap">
+                <MapPin className="h-3.5 w-3.5 text-primary shrink-0" /> {booking.pickupLocation.name} &rarr;{" "}
                 {booking.dropLocation.name}
               </span>
             </div>
@@ -116,22 +112,12 @@ export function BookingDetailView({ booking }: DetailProps) {
           <h3 className="font-display text-base font-semibold">Cost Breakdown</h3>
           <div className="space-y-3 text-sm text-muted-foreground">
             <div className="flex justify-between">
-              <span>Rental duration ({pricingBreakdown.rentalDays} Days)</span>
-              <span>&#8377;{pricingBreakdown.baseRentalSubtotal}</span>
-            </div>
-            {pricingBreakdown.weekendMultiplierCharge > 0 && (
-              <div className="flex justify-between text-amber-500">
-                <span>Weekend pricing multiplier (20%)</span>
-                <span>+&#8377;{pricingBreakdown.weekendMultiplierCharge}</span>
-              </div>
-            )}
-            <div className="flex justify-between">
-              <span>GST (18% standard)</span>
-              <span>&#8377;{pricingBreakdown.taxAmount}</span>
+              <span>Base rental charge ({durationDays} Days)</span>
+              <span>&#8377;{Number(booking.baseAmount || 0)}</span>
             </div>
             <div className="flex justify-between border-t border-border/50 pt-3 font-bold text-foreground">
-              <span>Total estimate</span>
-              <span>&#8377;{pricingBreakdown.totalEstimate}</span>
+              <span>Total payable amount</span>
+              <span>&#8377;{Number(booking.totalAmount || 0)}</span>
             </div>
           </div>
         </div>

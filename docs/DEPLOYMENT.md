@@ -7,7 +7,7 @@
 - **Auth**: Supabase Auth
 - **Images**: Cloudinary
 - **Email**: Resend
-- **SMS**: MSG91
+- **SMS**: Provider-Agnostic (Default: `SMS_PROVIDER="none"`, Optional)
 - **Payments**: Cashfree
 - **Maps**: Google Maps
 - **DNS**: Cloudflare
@@ -36,10 +36,8 @@ CASHFREE_ENV="sandbox"  # or "production"
 # Resend
 RESEND_API_KEY="re_..."
 
-# MSG91
-MSG91_AUTH_KEY="..."
-MSG91_SENDER_ID="TRIPZY"
-MSG91_ROUTE="4"
+# SMS Provider (Optional: "none" | "console")
+SMS_PROVIDER="none"
 ```
 
 ## Vercel Deployment

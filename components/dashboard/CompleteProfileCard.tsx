@@ -55,7 +55,13 @@ export function CompleteProfileCard({
 
   return (
     <>
-      <div className="flex flex-col justify-between space-y-6 rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:border-border/80">
+      <div
+        className={`flex flex-col justify-between space-y-6 rounded-2xl p-6 shadow-sm transition-all ${
+          !isProfileComplete
+            ? "border-2 border-amber-500/50 bg-amber-500/[0.03] shadow-amber-500/5"
+            : "border border-border bg-card hover:border-border/80"
+        }`}
+      >
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -67,7 +73,14 @@ export function CompleteProfileCard({
                 <p className="text-xs text-muted-foreground">Personal & contact details</p>
               </div>
             </div>
-            <StatusBadge status={status} />
+            <div className="flex items-center gap-2">
+              {!isProfileComplete && (
+                <span className="hidden sm:inline-flex items-center rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                  Action Required
+                </span>
+              )}
+              <StatusBadge status={status} />
+            </div>
           </div>
 
           {/* Completion Progress Gauge */}

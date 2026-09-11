@@ -21,7 +21,7 @@ Tripzy is a self-drive car rental platform using a monolithic Next.js architectu
 | Forms | react-hook-form + Zod |
 | State | TanStack Query |
 | Email | Resend |
-| SMS | MSG91 |
+| SMS | Provider-Agnostic (Optional) |
 | Payments | Cashfree |
 | Images | Cloudinary |
 | Maps | Google Maps |

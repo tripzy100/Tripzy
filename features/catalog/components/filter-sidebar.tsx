@@ -164,7 +164,6 @@ export function FilterSidebar({ currentFilters, setFilter }: FilterSidebarProps)
             <option value="popular">Popularity</option>
             <option value="price_asc">Price: Low to High</option>
             <option value="price_desc">Price: High to Low</option>
-            <option value="rating">Rating</option>
           </select>
         </div>
       </div>
