@@ -377,14 +377,14 @@ export default function CheckoutWizard({
     .replace(/\s+/g, "-");
 
   return (
-    <div className="mx-auto max-w-6xl space-y-8 pb-20">
+    <div className="mx-auto max-w-6xl space-y-6 sm:space-y-8 pb-[calc(6rem+env(safe-area-inset-bottom))] lg:pb-12">
       {/* 3-Step Visual Progression Bar */}
-      <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
-        <div className="flex items-center justify-between max-w-2xl mx-auto">
+      <div className="rounded-2xl border border-border bg-card p-3 sm:p-4 shadow-sm">
+        <div className="flex items-center justify-between max-w-2xl mx-auto gap-1 sm:gap-2">
           {/* Step 1: Trip */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all ${
+              className={`flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full text-xs font-bold transition-all shrink-0 ${
                 step === "TRIP"
                   ? "bg-primary text-primary-foreground ring-4 ring-primary/20"
                   : bookingId
@@ -392,20 +392,20 @@ export default function CheckoutWizard({
                   : "bg-muted text-muted-foreground"
               }`}
             >
-              {bookingId ? <Check className="h-4 w-4" /> : "1"}
+              {bookingId ? <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : "1"}
             </div>
-            <div className="hidden sm:block">
-              <span className="text-xs font-bold text-foreground block">Trip</span>
-              <span className="text-[10px] text-muted-foreground">Vehicle & Dates</span>
+            <div className="block">
+              <span className="text-[11px] sm:text-xs font-bold text-foreground block leading-tight">Trip</span>
+              <span className="text-[9px] sm:text-[10px] text-muted-foreground hidden min-[360px]:block leading-tight">Dates & Location</span>
             </div>
           </div>
 
-          <ChevronRight className="h-4 w-4 text-muted-foreground/60 shrink-0" />
+          <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground/60 shrink-0" />
 
           {/* Step 2: Details & Verification */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all ${
+              className={`flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full text-xs font-bold transition-all shrink-0 ${
                 step === "VERIFICATION"
                   ? "bg-primary text-primary-foreground ring-4 ring-primary/20"
                   : kycDone
@@ -413,20 +413,20 @@ export default function CheckoutWizard({
                   : "bg-muted text-muted-foreground"
               }`}
             >
-              {kycDone ? <Check className="h-4 w-4" /> : "2"}
+              {kycDone ? <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : "2"}
             </div>
-            <div className="hidden sm:block">
-              <span className="text-xs font-bold text-foreground block">Verification</span>
-              <span className="text-[10px] text-muted-foreground">Profile & KYC</span>
+            <div className="block">
+              <span className="text-[11px] sm:text-xs font-bold text-foreground block leading-tight">Verify</span>
+              <span className="text-[9px] sm:text-[10px] text-muted-foreground hidden min-[360px]:block leading-tight">Profile & KYC</span>
             </div>
           </div>
 
-          <ChevronRight className="h-4 w-4 text-muted-foreground/60 shrink-0" />
+          <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground/60 shrink-0" />
 
           {/* Step 3: Payment */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all ${
+              className={`flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full text-xs font-bold transition-all shrink-0 ${
                 step === "PAYMENT"
                   ? "bg-primary text-primary-foreground ring-4 ring-primary/20"
                   : step === "SUCCESS"
@@ -434,11 +434,11 @@ export default function CheckoutWizard({
                   : "bg-muted text-muted-foreground"
               }`}
             >
-              {step === "SUCCESS" ? <Check className="h-4 w-4" /> : "3"}
+              {step === "SUCCESS" ? <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : "3"}
             </div>
-            <div className="hidden sm:block">
-              <span className="text-xs font-bold text-foreground block">Payment</span>
-              <span className="text-[10px] text-muted-foreground">Cashfree Gateway</span>
+            <div className="block">
+              <span className="text-[11px] sm:text-xs font-bold text-foreground block leading-tight">Pay</span>
+              <span className="text-[9px] sm:text-[10px] text-muted-foreground hidden min-[360px]:block leading-tight">Cashfree</span>
             </div>
           </div>
         </div>
@@ -756,6 +756,7 @@ export default function CheckoutWizard({
                       <label className="text-[11px] font-bold text-muted-foreground">Aadhaar Card Number (12 digits)</label>
                       <input
                         type="text"
+                        inputMode="numeric"
                         placeholder="XXXX XXXX XXXX"
                         value={aadhar}
                         maxLength={14}

@@ -109,15 +109,15 @@ function LoginContent() {
   };
 
   return (
-    <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-6 py-10 pb-28 sm:py-12 sm:pb-16">
-      <div className="w-full max-w-sm space-y-8">
+    <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 sm:px-6 py-8 sm:py-12 pb-[calc(2rem+env(safe-area-inset-bottom))] pt-[calc(1.5rem+env(safe-area-inset-top))]">
+      <div className="w-full max-w-sm space-y-6 sm:space-y-8">
         <Link href="/" className="flex items-center justify-center gap-2">
           <Car className="h-8 w-8 text-foreground" />
           <span className="font-display text-2xl font-bold tracking-tight text-foreground">
             TRIPZY
           </span>
         </Link>
-        <div className="space-y-6 rounded-2xl border border-border bg-card p-8 shadow-lg">
+        <div className="space-y-6 rounded-2xl border border-border bg-card p-5 sm:p-8 shadow-lg">
           {showOtpScreen ? (
             <div className="space-y-6">
               <div className="space-y-1.5 text-center">

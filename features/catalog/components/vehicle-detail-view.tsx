@@ -195,9 +195,9 @@ export function VehicleDetailView({
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 space-y-10 pb-28 lg:pb-12">
-      {/* Breadcrumb Navigation */}
-      <nav className="flex items-center gap-2 text-xs font-semibold text-muted-foreground" aria-label="Breadcrumb">
+    <div className="mx-auto max-w-7xl px-3.5 py-4 sm:px-6 sm:py-8 lg:px-8 space-y-6 sm:space-y-8 pb-[calc(6rem+env(safe-area-inset-bottom))] lg:pb-8">
+      {/* Breadcrumbs Navigation */}
+      <nav className="flex items-center gap-1.5 sm:gap-2 text-xs font-semibold text-muted-foreground truncate" aria-label="Breadcrumb">
         <Link href="/" className="transition-colors hover:text-foreground">
           Home
         </Link>
@@ -607,7 +607,7 @@ export function VehicleDetailView({
       )}
 
       {/* Mobile Sticky Bottom Booking Bar (< 1024px) */}
-      <div className="fixed bottom-0 inset-x-0 z-40 bg-card/95 backdrop-blur-md border-t border-border/80 px-4 py-3 sm:px-6 flex items-center justify-between gap-3 shadow-2xl lg:hidden">
+      <div className="fixed bottom-0 inset-x-0 z-40 bg-card/95 backdrop-blur-md border-t border-border/80 px-4 py-3 sm:px-6 pb-[calc(0.75rem+env(safe-area-inset-bottom))] flex items-center justify-between gap-3 shadow-2xl lg:hidden">
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline gap-1 truncate">
             <span className="font-display text-base sm:text-lg font-black text-foreground shrink-0">

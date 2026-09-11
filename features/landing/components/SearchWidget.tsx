@@ -69,22 +69,23 @@ export default function SearchWidget() {
             <span className="text-[10px] sm:text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
               QUICK RENTAL SELECT:
             </span>
-            <div className="grid grid-cols-3 sm:flex sm:items-center gap-1.5 sm:gap-2">
+            <div className="grid grid-cols-3 sm:flex sm:items-center gap-1 sm:gap-2">
               <button
                 type="button"
                 onClick={selectToday}
-                className={`h-7.5 sm:h-8 px-2 sm:px-3.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all shadow-2xs truncate text-center ${
+                className={`h-7.5 sm:h-8 px-1.5 sm:px-3.5 rounded-lg text-[10.5px] min-[360px]:text-[11px] sm:text-xs font-bold transition-all shadow-2xs truncate text-center ${
                   activePreset === "today"
                     ? "bg-[#f59e0b] text-white shadow-xs"
                     : "bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground"
                 }`}
               >
-                Today &rarr; Tomorrow
+                <span className="hidden min-[380px]:inline">Today &rarr; Tomorrow</span>
+                <span className="min-[380px]:hidden">Today &rarr; Tmrw</span>
               </button>
               <button
                 type="button"
                 onClick={selectTomorrow}
-                className={`h-7.5 sm:h-8 px-2 sm:px-3.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all truncate text-center ${
+                className={`h-7.5 sm:h-8 px-1.5 sm:px-3.5 rounded-lg text-[10.5px] min-[360px]:text-[11px] sm:text-xs font-bold transition-all truncate text-center ${
                   activePreset === "tomorrow"
                     ? "bg-[#f59e0b] text-white shadow-xs"
                     : "bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -95,13 +96,14 @@ export default function SearchWidget() {
               <button
                 type="button"
                 onClick={selectThisWeekend}
-                className={`h-7.5 sm:h-8 px-2 sm:px-3.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all truncate text-center ${
+                className={`h-7.5 sm:h-8 px-1.5 sm:px-3.5 rounded-lg text-[10.5px] min-[360px]:text-[11px] sm:text-xs font-bold transition-all truncate text-center ${
                   activePreset === "weekend"
                     ? "bg-[#f59e0b] text-white shadow-xs"
                     : "bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground"
                 }`}
               >
-                This Weekend
+                <span className="hidden min-[360px]:inline">This Weekend</span>
+                <span className="min-[360px]:hidden">Weekend</span>
               </button>
             </div>
           </div>

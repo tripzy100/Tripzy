@@ -64,7 +64,7 @@ export function MobileDrawer({ isOpen, onClose, theme, toggleTheme }: MobileDraw
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed bottom-0 right-0 top-0 z-50 flex w-full max-w-xs sm:max-w-sm flex-col border-l border-border bg-background text-foreground p-5 sm:p-6 shadow-2xl overflow-y-auto"
+            className="fixed bottom-0 right-0 top-0 z-50 flex h-[100dvh] max-h-[100dvh] w-full max-w-xs sm:max-w-sm flex-col border-l border-border bg-background text-foreground p-4 sm:p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-[calc(1rem+env(safe-area-inset-top))] shadow-2xl overflow-y-auto"
           >
             {/* Header */}
             <div className="flex items-center justify-between border-b border-border/70 pb-4">

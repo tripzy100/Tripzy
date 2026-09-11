@@ -63,25 +63,25 @@ export function CatalogToolbar() {
         </div>
 
         {/* Filter Drawer Trigger & Sort Select */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 w-full sm:w-auto">
           <Button
             variant="outline"
             size="sm"
             onClick={() => setIsDrawerOpen(true)}
-            className="h-9 font-bold text-xs gap-1.5"
+            className="h-9 w-1/2 sm:w-auto font-bold text-xs gap-1.5 justify-center"
           >
             <SlidersHorizontal className="h-3.5 w-3.5" />
             <span>Filters</span>
           </Button>
 
-          <div className="relative flex items-center">
+          <div className="relative flex items-center w-1/2 sm:w-auto">
             <ArrowUpDown className="absolute left-2.5 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
             <select
               value={activeSort}
               onChange={(e) => updateParam("sort", e.target.value)}
-              className="flex h-9 rounded-lg border border-input bg-card pl-8 pr-3 text-xs font-semibold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="w-full sm:w-auto flex h-9 rounded-lg border border-input bg-card pl-8 pr-3 text-xs font-semibold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring truncate cursor-pointer"
             >
-              <option value="recommended">Sort: Recommended</option>
+              <option value="recommended">Recommended</option>
               <option value="price_asc">Price: Low to High</option>
               <option value="price_desc">Price: High to Low</option>
             </select>

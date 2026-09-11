@@ -54,13 +54,13 @@ export function Header() {
           </Link>
 
           {/* Mobile Center Phone Number Badge */}
-          <div className="flex flex-1 justify-center px-2 lg:hidden">
+          <div className="flex flex-1 justify-center px-1.5 sm:px-2 lg:hidden min-w-0">
             <a
               href={`tel:${siteConfig.contact.phoneRaw}`}
               aria-label={`Call Tripzy: ${siteConfig.contact.phone}`}
-              className="inline-flex items-center justify-center h-8 px-2.5 sm:px-3 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold text-[12px] sm:text-[13px] gap-1.5 hover:bg-amber-500/20 transition-colors shadow-2xs whitespace-nowrap active:scale-95"
+              className="inline-flex items-center justify-center h-8 sm:h-8.5 px-2 sm:px-3 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold text-[11px] min-[360px]:text-[12px] sm:text-[13px] gap-1 sm:gap-1.5 hover:bg-amber-500/20 transition-colors shadow-2xs whitespace-nowrap active:scale-95 shrink-0"
             >
-              <Phone className="h-3.5 w-3.5 stroke-[2.2] shrink-0 text-amber-500" />
+              <Phone className="h-3 w-3 sm:h-3.5 sm:w-3.5 stroke-[2.2] shrink-0 text-amber-500" />
               <span className="leading-none">{siteConfig.contact.phone}</span>
             </a>
           </div>
@@ -156,7 +156,7 @@ export function Header() {
           <div className="flex items-center lg:hidden shrink-0">
             <button
               onClick={() => setIsMobileOpen(true)}
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-foreground hover:bg-muted transition-colors active:scale-95"
+              className="flex h-10 w-10 min-w-[40px] items-center justify-center rounded-lg text-foreground hover:bg-muted transition-colors active:scale-95"
               aria-label="Open menu"
             >
               <Menu className="h-6 w-6 stroke-[2]" />
